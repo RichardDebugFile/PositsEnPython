@@ -1,0 +1,1281 @@
+2025-07-30 20:57:15,035 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-30 20:57:26,006 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-30 20:57:35,742 DEBUG | PTT.bytes = 155648
+2025-07-30 20:57:45,003 DEBUG | IA.input = quiero una tarea para poder hablar sobre el racismo para las próximas semanas por favor en color rojo
+2025-07-30 20:57:45,003 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-30 20:57:45,003 DEBUG | Ollama.prompt: Hoy es 2025-07-30. Toma el pedido del usuario y devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título explícito, ¡INVENTA uno breve y claro!)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+quiero una tarea para poder hablar sobre el racismo para las próximas semanas por favor en color rojo
+
+2025-07-30 20:57:53,537 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-07-31T01:57:53.5365366Z","message":{"role":"assistant","content":"{\n  \"title\": \"Discusión sobre el racismo\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"Morado\",\n  \"priority\": true\n}"},"done_reason":"stop","done":true,"total_duration":6485184900,"load_duration":74490900,"prompt_eval_count":264,"prompt_eval_duration":2952828100,"eval_count":45,"eval_duration":3284031700}
+2025-07-30 20:57:53,537 DEBUG | Ollama.content = {
+  "title": "Discusión sobre el racismo",
+  "desc": "",
+  "due": "",
+  "color": "Morado",
+  "priority": true
+}
+2025-07-30 20:57:53,537 DEBUG | Ollama.json = {'title': 'Discusión sobre el racismo', 'desc': '', 'due': '', 'color': 'Morado', 'priority': True}
+2025-07-30 20:57:53,538 DEBUG | IA.output = {'title': 'Discusión sobre el racismo', 'desc': '', 'due': '', 'color': 'Lavender', 'priority': True}
+2025-07-30 20:57:53,539 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-30 20:59:18,601 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-30 21:00:11,056 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-30 21:00:12,312 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-30 21:00:16,968 DEBUG | Render: only_pending=False color_filter=Coral
+2025-07-30 21:00:18,106 DEBUG | Render: only_pending=False color_filter=Amarillo
+2025-07-30 21:00:19,313 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 16:48:16,428 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 18:50:31,052 DEBUG | PTT.bytes = 630784
+2025-07-31 18:51:30,491 DEBUG | IA.input = necesita ser una tarea en dónde debo extraer algunas músicas de un juego llamado Wuthering Waves y de otro llamado Zenless Zone Zero y necesito prácticamente extraer y descargar músicas, ponlo de color rojo la nota y de prioridad alta
+2025-07-31 18:51:30,492 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 18:51:30,492 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Toma el pedido del usuario y devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título explícito, ¡INVENTA uno breve y claro!)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+necesita ser una tarea en dónde debo extraer algunas músicas de un juego llamado Wuthering Waves y de otro llamado Zenless Zone Zero y necesito prácticamente extraer y descargar músicas, ponlo de color rojo la nota y de prioridad alta
+
+2025-07-31 18:51:34,670 ERROR | Ollama.URLError: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+Traceback (most recent call last):
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 1319, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1338, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1384, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1333, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1093, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1037, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1003, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "g:\Documentos G\Ing. Sotware\ExperimentosPy\NotasAdesivas\main.py", line 408, in ollama_chat_json
+    with urllib.request.urlopen(req, timeout=90) as resp:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 489, in open
+    response = self._open(req, data)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 466, in _call_chain
+    result = func(*args)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 1348, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 1322, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+
+2025-07-31 18:52:11,177 DEBUG | IA.input = necesita ser una tarea en dónde debo extraer algunas músicas de un juego llamado Wuthering Waves y de otro llamado Zenless Zone Zero y necesito prácticamente extraer y descargar músicas, ponlo de color rojo la nota y de prioridad alta
+2025-07-31 18:52:11,178 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 18:52:11,212 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Toma el pedido del usuario y devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título explícito, ¡INVENTA uno breve y claro!)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+necesita ser una tarea en dónde debo extraer algunas músicas de un juego llamado Wuthering Waves y de otro llamado Zenless Zone Zero y necesito prácticamente extraer y descargar músicas, ponlo de color rojo la nota y de prioridad alta
+
+2025-07-31 18:52:28,495 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-07-31T23:52:28.4949645Z","message":{"role":"assistant","content":"{\n  \"title\": \"Extraer Música de Juegos\",\n  \"desc\": \"Extraer y descargar música de Wuthering Waves y Zenless Zone Zero.\",\n  \"due\": \"\",\n  \"color\": \"Coral\",\n  \"priority\": true\n}"},"done_reason":"stop","done":true,"total_duration":15249004100,"load_duration":5019619700,"prompt_eval_count":291,"prompt_eval_duration":4664158600,"eval_count":58,"eval_duration":5388459900}
+2025-07-31 18:52:28,495 DEBUG | Ollama.content = {
+  "title": "Extraer Música de Juegos",
+  "desc": "Extraer y descargar música de Wuthering Waves y Zenless Zone Zero.",
+  "due": "",
+  "color": "Coral",
+  "priority": true
+}
+2025-07-31 18:52:28,495 DEBUG | Ollama.json = {'title': 'Extraer Música de Juegos', 'desc': 'Extraer y descargar música de Wuthering Waves y Zenless Zone Zero.', 'due': '', 'color': 'Coral', 'priority': True}
+2025-07-31 18:52:28,498 DEBUG | IA.output = {'title': 'Extraer Música de Juegos', 'desc': 'Extraer y descargar música de Wuthering Waves y Zenless Zone Zero.', 'due': '', 'color': 'Coral', 'priority': True}
+2025-07-31 18:52:28,537 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:14:10,691 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:18:39,960 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:19:00,690 DEBUG | IA.input = 
+2025-07-31 19:19:00,690 DEBUG | IA.images = 1
+2025-07-31 19:19:00,690 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:19:00,691 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 19:19:44,863 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:19:44.8604206Z","message":{"role":"assistant","content":"{\"title\": \"\", \"desc\": \"\", \"due\": \"\", \"color\": \"\", \"priority\": false}"},"done_reason":"stop","done":true,"total_duration":42078776300,"load_duration":3108674700,"prompt_eval_count":536,"prompt_eval_duration":37170443100,"eval_count":22,"eval_duration":1632502000}
+2025-07-31 19:19:44,863 DEBUG | Ollama.content = {"title": "", "desc": "", "due": "", "color": "", "priority": false}
+2025-07-31 19:19:44,863 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '', 'color': '', 'priority': False}
+2025-07-31 19:20:21,421 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:20:46,305 DEBUG | IA.input = Quiero hacer un horario co este calendario
+2025-07-31 19:20:46,305 DEBUG | IA.images = 1
+2025-07-31 19:20:46,314 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:20:46,314 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Quiero hacer un horario co este calendario
+
+2025-07-31 19:21:27,121 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:21:27.1212793Z","message":{"role":"assistant","content":"{\n  \"title\": \"Creación de Horario\",\n  \"desc\": \"Crear un horario basado en el calendario proporcionado.\",\n  \"due\": \"\",\n  \"color\": \"Ocean\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":38745628700,"load_duration":76696100,"prompt_eval_count":545,"prompt_eval_duration":34650906800,"eval_count":53,"eval_duration":3887354100}
+2025-07-31 19:21:27,122 DEBUG | Ollama.content = {
+  "title": "Creación de Horario",
+  "desc": "Crear un horario basado en el calendario proporcionado.",
+  "due": "",
+  "color": "Ocean",
+  "priority": false
+}
+2025-07-31 19:21:27,122 DEBUG | Ollama.json = {'title': 'Creación de Horario', 'desc': 'Crear un horario basado en el calendario proporcionado.', 'due': '', 'color': 'Ocean', 'priority': False}
+2025-07-31 19:24:41,996 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:24:56,352 DEBUG | IA.input = Quiero una tarea de la segunda guerra mundial
+2025-07-31 19:24:56,352 DEBUG | IA.images = 0
+2025-07-31 19:24:56,352 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:24:56,352 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Quiero una tarea de la segunda guerra mundial
+
+2025-07-31 19:25:03,622 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:25:03.6219724Z","message":{"role":"assistant","content":"{\n  \"title\": \"Investigación Segunda Guerra Mundial\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"Nature\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":5195374200,"load_duration":68198100,"prompt_eval_count":243,"prompt_eval_duration":1788773100,"eval_count":43,"eval_duration":3184309400}
+2025-07-31 19:25:03,622 DEBUG | Ollama.content = {
+  "title": "Investigación Segunda Guerra Mundial",
+  "desc": "",
+  "due": "",
+  "color": "Nature",
+  "priority": false
+}
+2025-07-31 19:25:03,622 DEBUG | Ollama.json = {'title': 'Investigación Segunda Guerra Mundial', 'desc': '', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 19:28:00,040 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:28:22,343 DEBUG | IA.input = Quiero una tarea de la segunda guerra mundial
+2025-07-31 19:28:22,343 DEBUG | IA.images = 0
+2025-07-31 19:28:22,343 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:28:22,343 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Quiero una tarea de la segunda guerra mundial
+
+2025-07-31 19:28:28,091 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:28:28.0905489Z","message":{"role":"assistant","content":"{\n  \"title\": \"Investigación Segunda Guerra Mundial\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"Nature\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":3681503200,"load_duration":70123600,"prompt_eval_count":243,"prompt_eval_duration":314603100,"eval_count":43,"eval_duration":3146960800}
+2025-07-31 19:28:28,091 DEBUG | Ollama.content = {
+  "title": "Investigación Segunda Guerra Mundial",
+  "desc": "",
+  "due": "",
+  "color": "Nature",
+  "priority": false
+}
+2025-07-31 19:28:28,091 DEBUG | Ollama.json = {'title': 'Investigación Segunda Guerra Mundial', 'desc': '', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 19:28:28,092 DEBUG | IA.output = {'title': 'Investigación Segunda Guerra Mundial', 'desc': '', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 19:28:28,094 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:28:31,087 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:29:00,822 DEBUG | IA.input = Necesito hacer una miniatura de youtube con esta imagen
+2025-07-31 19:29:00,823 DEBUG | IA.images = 1
+2025-07-31 19:29:00,832 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:29:00,832 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Necesito hacer una miniatura de youtube con esta imagen
+
+2025-07-31 19:29:41,866 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:29:41.8654445Z","message":{"role":"assistant","content":"{\n  \"title\": \"Crear miniatura de YouTube\",\n  \"desc\": \"Diseñar una miniatura atractiva para un video de YouTube utilizando la imagen proporcionada.\",\n  \"due\": \"\",\n  \"color\": \"\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":38986919300,"load_duration":83791500,"prompt_eval_count":548,"prompt_eval_duration":34369051600,"eval_count":59,"eval_duration":4397057000}
+2025-07-31 19:29:41,866 DEBUG | Ollama.content = {
+  "title": "Crear miniatura de YouTube",
+  "desc": "Diseñar una miniatura atractiva para un video de YouTube utilizando la imagen proporcionada.",
+  "due": "",
+  "color": "",
+  "priority": false
+}
+2025-07-31 19:29:41,866 DEBUG | Ollama.json = {'title': 'Crear miniatura de YouTube', 'desc': 'Diseñar una miniatura atractiva para un video de YouTube utilizando la imagen proporcionada.', 'due': '', 'color': '', 'priority': False}
+2025-07-31 19:29:41,867 DEBUG | IA.output = {'title': 'Crear miniatura de YouTube', 'desc': 'Diseñar una miniatura atractiva para un video de YouTube utilizando la imagen proporcionada.', 'due': '', 'color': None, 'priority': False}
+2025-07-31 19:29:41,869 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:29:54,650 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:30:18,902 DEBUG | IA.input = la tarea
+2025-07-31 19:30:18,903 DEBUG | IA.images = 1
+2025-07-31 19:30:18,903 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:30:18,903 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+la tarea
+
+2025-07-31 19:30:55,752 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:30:55.7513949Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":34802039100,"load_duration":66898000,"prompt_eval_count":539,"prompt_eval_duration":34484434100,"eval_count":2,"eval_duration":124070300}
+2025-07-31 19:30:55,752 DEBUG | Ollama.content = {}
+2025-07-31 19:30:55,752 DEBUG | Ollama.json = {}
+2025-07-31 19:30:55,753 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 19:30:55,754 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:31:34,358 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:41:16,164 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:41:29,747 DEBUG | IA.input = 
+2025-07-31 19:41:29,748 DEBUG | IA.images = 1
+2025-07-31 19:41:29,755 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:41:29,755 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 19:42:14,518 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:42:14.5178307Z","message":{"role":"assistant","content":"{\"title\": \"Integración de APIs\", \"desc\": \"\", \"due\": \"2025-08-14\", \"color\": \"Ocean\", \"priority\": true}"},"done_reason":"stop","done":true,"total_duration":42706314900,"load_duration":2790353400,"prompt_eval_count":540,"prompt_eval_duration":36614993900,"eval_count":40,"eval_duration":3144126200}
+2025-07-31 19:42:14,518 DEBUG | Ollama.content = {"title": "Integración de APIs", "desc": "", "due": "2025-08-14", "color": "Ocean", "priority": true}
+2025-07-31 19:42:14,518 DEBUG | Ollama.json = {'title': 'Integración de APIs', 'desc': '', 'due': '2025-08-14', 'color': 'Ocean', 'priority': True}
+2025-07-31 19:42:14,520 DEBUG | IA.output = {'title': 'Integración de APIs', 'desc': '', 'due': '2025-08-14', 'color': 'Ocean', 'priority': True}
+2025-07-31 19:42:14,521 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:42:27,339 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:45:51,162 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:46:00,210 DEBUG | IA.input = 
+2025-07-31 19:46:00,210 DEBUG | IA.images = 1
+2025-07-31 19:46:00,218 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:46:00,218 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 19:46:41,215 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:46:41.2148563Z","message":{"role":"assistant","content":"{\n  \"title\": \"\",\n  \"desc\": \"\",\n  \"due\": \"2025-07-31\",\n  \"color\": \"\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":38892715900,"load_duration":103479700,"prompt_eval_count":543,"prompt_eval_duration":35174720900,"eval_count":45,"eval_duration":3452484900}
+2025-07-31 19:46:41,215 DEBUG | Ollama.content = {
+  "title": "",
+  "desc": "",
+  "due": "2025-07-31",
+  "color": "",
+  "priority": false
+}
+2025-07-31 19:46:41,215 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '2025-07-31', 'color': '', 'priority': False}
+2025-07-31 19:46:41,218 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '2025-07-31', 'color': None, 'priority': False}
+2025-07-31 19:46:41,220 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:46:54,787 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:47:10,099 DEBUG | IA.input = 
+2025-07-31 19:47:10,099 DEBUG | IA.images = 1
+2025-07-31 19:47:10,100 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:47:10,100 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 19:47:49,840 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:47:49.8398003Z","message":{"role":"assistant","content":"{\"title\": \"\", \"desc\": \"\", \"due\": \"2025-08-01\", \"color\": \"Naranja\", \"priority\": false}"},"done_reason":"stop","done":true,"total_duration":37686735500,"load_duration":72427900,"prompt_eval_count":543,"prompt_eval_duration":34780423300,"eval_count":36,"eval_duration":2701064000}
+2025-07-31 19:47:49,840 DEBUG | Ollama.content = {"title": "", "desc": "", "due": "2025-08-01", "color": "Naranja", "priority": false}
+2025-07-31 19:47:49,840 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '2025-08-01', 'color': 'Naranja', 'priority': False}
+2025-07-31 19:47:49,841 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '2025-08-01', 'color': 'Sunset', 'priority': False}
+2025-07-31 19:47:49,843 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:48:03,243 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:48:09,099 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:48:54,834 DEBUG | IA.input = De lo que está en la imagen, extrae los datos para la descripcion
+2025-07-31 19:48:54,834 DEBUG | IA.images = 1
+2025-07-31 19:48:54,834 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:48:54,834 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+De lo que está en la imagen, extrae los datos para la descripcion
+
+2025-07-31 19:49:39,651 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:49:39.6509943Z","message":{"role":"assistant","content":"{\n  \"title\": \"\",\n  \"desc\": \"Diagrama de flujo de un proceso que involucra diferentes etapas como 'Comienzo', 'Inicio', 'Proceso', 'Decisión' y 'Fin'. Se muestra un diagrama de flujo con flechas que indican el orden de las etapas.\",\n  \"due\": \"\",\n  \"color\": \"Nature\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":42730645100,"load_duration":72946200,"prompt_eval_count":559,"prompt_eval_duration":35397923100,"eval_count":86,"eval_duration":7127226300}
+2025-07-31 19:49:39,651 DEBUG | Ollama.content = {
+  "title": "",
+  "desc": "Diagrama de flujo de un proceso que involucra diferentes etapas como 'Comienzo', 'Inicio', 'Proceso', 'Decisión' y 'Fin'. Se muestra un diagrama de flujo con flechas que indican el orden de las etapas.",
+  "due": "",
+  "color": "Nature",
+  "priority": false
+}
+2025-07-31 19:49:39,652 DEBUG | Ollama.json = {'title': '', 'desc': "Diagrama de flujo de un proceso que involucra diferentes etapas como 'Comienzo', 'Inicio', 'Proceso', 'Decisión' y 'Fin'. Se muestra un diagrama de flujo con flechas que indican el orden de las etapas.", 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 19:49:39,653 DEBUG | IA.output = {'title': 'Diagrama de flujo de un proceso que invo...', 'desc': "Diagrama de flujo de un proceso que involucra diferentes etapas como 'Comienzo', 'Inicio', 'Proceso', 'Decisión' y 'Fin'. Se muestra un diagrama de flujo con flechas que indican el orden de las etapas.", 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 19:49:39,654 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:51:24,092 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:51:46,017 DEBUG | IA.input = Quiero una descripción de la imagne como tarea
+2025-07-31 19:51:46,017 DEBUG | IA.images = 1
+2025-07-31 19:51:46,025 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:51:46,025 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Quiero una descripción de la imagne como tarea
+
+2025-07-31 19:52:27,639 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:52:27.6391121Z","message":{"role":"assistant","content":"{\n  \"title\": \"Descripción de imagen\",\n  \"desc\": \"Describir detalladamente la imagen proporcionada.\",\n  \"due\": \"\",\n  \"color\": \"\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":39558390200,"load_duration":106877100,"prompt_eval_count":554,"prompt_eval_duration":35500456200,"eval_count":48,"eval_duration":3768542800}
+2025-07-31 19:52:27,639 DEBUG | Ollama.content = {
+  "title": "Descripción de imagen",
+  "desc": "Describir detalladamente la imagen proporcionada.",
+  "due": "",
+  "color": "",
+  "priority": false
+}
+2025-07-31 19:52:27,640 DEBUG | Ollama.json = {'title': 'Descripción de imagen', 'desc': 'Describir detalladamente la imagen proporcionada.', 'due': '', 'color': '', 'priority': False}
+2025-07-31 19:52:27,642 DEBUG | IA.output = {'title': 'Descripción de imagen', 'desc': 'Describir detalladamente la imagen proporcionada.', 'due': '', 'color': None, 'priority': False}
+2025-07-31 19:52:27,644 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:52:33,289 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:52:49,753 DEBUG | IA.input = 
+2025-07-31 19:52:49,753 DEBUG | IA.images = 1
+2025-07-31 19:52:49,753 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 19:52:49,753 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 19:53:29,664 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T00:53:29.6637303Z","message":{"role":"assistant","content":"{\"title\": \"\", \"desc\": \"\", \"due\": \"\", \"color\": \"\", \"priority\": false}"},"done_reason":"stop","done":true,"total_duration":37862914400,"load_duration":68240200,"prompt_eval_count":543,"prompt_eval_duration":36019414800,"eval_count":22,"eval_duration":1622171600}
+2025-07-31 19:53:29,664 DEBUG | Ollama.content = {"title": "", "desc": "", "due": "", "color": "", "priority": false}
+2025-07-31 19:53:29,664 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '', 'color': '', 'priority': False}
+2025-07-31 19:53:29,735 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 19:53:29,737 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 19:54:34,121 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:27:48,209 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:28:09,664 DEBUG | IA.input = 
+2025-07-31 20:28:09,665 DEBUG | IA.images = 1
+2025-07-31 20:28:09,673 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 20:28:09,673 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 20:28:55,780 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T01:28:55.7800459Z","message":{"role":"assistant","content":"{\"title\": \"\", \"desc\": \"\", \"due\": \"\", \"color\": \"Nature\", \"priority\": false}"},"done_reason":"stop","done":true,"total_duration":44003390900,"load_duration":3344806400,"prompt_eval_count":539,"prompt_eval_duration":38438658800,"eval_count":24,"eval_duration":2024614600}
+2025-07-31 20:28:55,780 DEBUG | Ollama.content = {"title": "", "desc": "", "due": "", "color": "Nature", "priority": false}
+2025-07-31 20:28:55,780 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 20:28:55,782 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 20:28:55,783 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:29:20,631 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:29:29,808 DEBUG | IA.input = 
+2025-07-31 20:29:29,808 DEBUG | IA.images = 1
+2025-07-31 20:29:29,809 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 20:29:29,809 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 20:30:11,428 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T01:30:11.4279164Z","message":{"role":"assistant","content":"{\"title\": \"\", \"desc\": \"\", \"due\": \"2025-08-01\", \"color\": \"Naranja\", \"priority\": false}"},"done_reason":"stop","done":true,"total_duration":39565986700,"load_duration":69079400,"prompt_eval_count":539,"prompt_eval_duration":36304239100,"eval_count":36,"eval_duration":3042625100}
+2025-07-31 20:30:11,428 DEBUG | Ollama.content = {"title": "", "desc": "", "due": "2025-08-01", "color": "Naranja", "priority": false}
+2025-07-31 20:30:11,428 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '2025-08-01', 'color': 'Naranja', 'priority': False}
+2025-07-31 20:30:11,429 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '2025-08-01', 'color': 'Sunset', 'priority': False}
+2025-07-31 20:30:11,431 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:30:14,287 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:31:25,365 DEBUG | PTT.bytes = 151552
+2025-07-31 20:36:02,795 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:36:15,485 DEBUG | IA.input = 
+2025-07-31 20:36:15,485 DEBUG | IA.images = 1
+2025-07-31 20:36:15,487 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 20:36:15,487 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 20:36:57,516 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T01:36:57.5158267Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":39941507400,"load_duration":2789449000,"prompt_eval_count":539,"prompt_eval_duration":36845602800,"eval_count":2,"eval_duration":131110800}
+2025-07-31 20:36:57,516 DEBUG | Ollama.content = {}
+2025-07-31 20:36:57,516 DEBUG | Ollama.json = {}
+2025-07-31 20:36:57,519 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 20:36:57,521 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:37:02,062 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:47:00,958 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:47:18,611 DEBUG | IA.input = 
+2025-07-31 20:47:18,612 DEBUG | IA.images = 1
+2025-07-31 20:47:18,630 ERROR | ollama_chat_json: ollama_chat_json() got an unexpected keyword argument 'images_b64'
+Traceback (most recent call last):
+  File "g:\Documentos G\Ing. Sotware\ExperimentosPy\NotasAdesivas\main.py", line 1048, in _analyze_and_create
+    extracted = extract_task_with_ollama(
+        user_text,
+        image_paths=self.image_paths
+    )
+  File "g:\Documentos G\Ing. Sotware\ExperimentosPy\NotasAdesivas\main.py", line 516, in extract_task_with_ollama
+    obj = ollama_chat_json(prompt, images_b64=images_b64)
+TypeError: ollama_chat_json() got an unexpected keyword argument 'images_b64'
+
+2025-07-31 20:50:51,008 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 20:51:11,345 DEBUG | IA.input = 
+2025-07-31 20:51:11,345 DEBUG | IA.images = 1
+2025-07-31 20:51:11,345 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 20:51:11,345 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 20:51:13,432 ERROR | Ollama.URLError: HTTP Error 400: Bad Request
+Traceback (most recent call last):
+  File "g:\Documentos G\Ing. Sotware\ExperimentosPy\NotasAdesivas\main.py", line 424, in ollama_chat_json
+    with urllib.request.urlopen(req, timeout=90) as resp:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 495, in open
+    response = meth(req, response)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 604, in http_response
+    response = self.parent.error(
+        'http', request, response, code, msg, hdrs)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 533, in error
+    return self._call_chain(*args)
+           ~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 466, in _call_chain
+    result = func(*args)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 613, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+
+2025-07-31 21:07:46,061 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:07:53,909 DEBUG | IA.input = 
+2025-07-31 21:07:53,909 DEBUG | IA.images = 1
+2025-07-31 21:07:53,919 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:07:53,920 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:08:02,375 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:08:02.3747199Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":6375318800,"load_duration":2548924100,"prompt_eval_count":279,"prompt_eval_duration":3571688900,"eval_count":2,"eval_duration":89883700}
+2025-07-31 21:08:02,375 DEBUG | Ollama.content = {}
+2025-07-31 21:08:02,375 DEBUG | Ollama.json = {}
+2025-07-31 21:08:02,377 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 21:08:02,416 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:08:51,548 DEBUG | IA.input = 
+2025-07-31 21:08:51,548 DEBUG | IA.images = 1
+2025-07-31 21:08:51,549 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:08:51,549 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:08:54,180 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:08:54.1796595Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":591568300,"load_duration":69319100,"prompt_eval_count":279,"prompt_eval_duration":317628600,"eval_count":2,"eval_duration":71760400}
+2025-07-31 21:08:54,180 DEBUG | Ollama.content = {}
+2025-07-31 21:08:54,180 DEBUG | Ollama.json = {}
+2025-07-31 21:08:54,182 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 21:08:54,183 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:08:58,269 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:08:58,980 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:09:08,260 DEBUG | IA.input = Quiero una tarea random
+2025-07-31 21:09:08,260 DEBUG | IA.images = 0
+2025-07-31 21:09:08,261 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:09:08,261 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Quiero una tarea random
+
+2025-07-31 21:09:15,072 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:09:15.0713299Z","message":{"role":"assistant","content":"{\n  \"title\": \"Tarea aleatoria\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":4761864300,"load_duration":67174700,"prompt_eval_count":239,"prompt_eval_duration":1658769200,"eval_count":38,"eval_duration":2901709700}
+2025-07-31 21:09:15,072 DEBUG | Ollama.content = {
+  "title": "Tarea aleatoria",
+  "desc": "",
+  "due": "",
+  "color": "",
+  "priority": false
+}
+2025-07-31 21:09:15,072 DEBUG | Ollama.json = {'title': 'Tarea aleatoria', 'desc': '', 'due': '', 'color': '', 'priority': False}
+2025-07-31 21:09:15,073 DEBUG | IA.output = {'title': 'Tarea aleatoria', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 21:09:15,074 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:09:20,221 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:09:41,700 DEBUG | IA.input = Hola modelo de IA, quiero que me pongas una tarea aleatoria, la que quieras.
+2025-07-31 21:09:41,701 DEBUG | IA.images = 0
+2025-07-31 21:09:41,701 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:09:41,701 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Hola modelo de IA, quiero que me pongas una tarea aleatoria, la que quieras.
+
+2025-07-31 21:09:47,605 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:09:47.6049252Z","message":{"role":"assistant","content":"{\n  \"title\": \"Tarea aleatoria\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"Verde\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":3868237400,"load_duration":66063000,"prompt_eval_count":253,"prompt_eval_duration":567573500,"eval_count":41,"eval_duration":3097642000}
+2025-07-31 21:09:47,605 DEBUG | Ollama.content = {
+  "title": "Tarea aleatoria",
+  "desc": "",
+  "due": "",
+  "color": "Verde",
+  "priority": false
+}
+2025-07-31 21:09:47,606 DEBUG | Ollama.json = {'title': 'Tarea aleatoria', 'desc': '', 'due': '', 'color': 'Verde', 'priority': False}
+2025-07-31 21:09:47,608 DEBUG | IA.output = {'title': 'Tarea aleatoria', 'desc': '', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 21:09:47,610 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:09:53,165 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:10:17,181 DEBUG | IA.input = Una tarea sobre Superconductores, donde analizare los beneficios de ellos en PowerPoint
+2025-07-31 21:10:17,182 DEBUG | IA.images = 0
+2025-07-31 21:10:17,182 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:10:17,182 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Una tarea sobre Superconductores, donde analizare los beneficios de ellos en PowerPoint
+
+2025-07-31 21:10:24,772 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:10:24.7719008Z","message":{"role":"assistant","content":"{\n  \"title\": \"Análisis de Superconductores (PowerPoint)\",\n  \"desc\": \"Analizar los beneficios de los superconductores en una presentación de PowerPoint.\",\n  \"due\": \"\",\n  \"color\": \"Azul\",\n  \"priority\": false\n}"},"done_reason":"stop","done":true,"total_duration":5552112900,"load_duration":65288500,"prompt_eval_count":250,"prompt_eval_duration":481526600,"eval_count":61,"eval_duration":4872775800}
+2025-07-31 21:10:24,772 DEBUG | Ollama.content = {
+  "title": "Análisis de Superconductores (PowerPoint)",
+  "desc": "Analizar los beneficios de los superconductores en una presentación de PowerPoint.",
+  "due": "",
+  "color": "Azul",
+  "priority": false
+}
+2025-07-31 21:10:24,772 DEBUG | Ollama.json = {'title': 'Análisis de Superconductores (PowerPoint)', 'desc': 'Analizar los beneficios de los superconductores en una presentación de PowerPoint.', 'due': '', 'color': 'Azul', 'priority': False}
+2025-07-31 21:10:24,774 DEBUG | IA.output = {'title': 'Análisis de Superconductores (PowerPoint)', 'desc': 'Analizar los beneficios de los superconductores en una presentación de PowerPoint.', 'due': '', 'color': 'Ocean', 'priority': False}
+2025-07-31 21:10:24,776 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:11:29,332 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:12:02,353 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:12:12,869 DEBUG | IA.input = 
+2025-07-31 21:12:12,870 DEBUG | IA.images = 1
+2025-07-31 21:12:12,879 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:12:12,879 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:12:17,592 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:12:17.5908325Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":2608885500,"load_duration":65567200,"prompt_eval_count":279,"prompt_eval_duration":2307990800,"eval_count":2,"eval_duration":90148300}
+2025-07-31 21:12:17,592 DEBUG | Ollama.content = {}
+2025-07-31 21:12:17,592 DEBUG | Ollama.json = {}
+2025-07-31 21:12:17,594 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 21:12:17,595 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:19:50,304 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:20:03,585 DEBUG | IA.input = 
+2025-07-31 21:20:03,585 DEBUG | IA.images = 1
+2025-07-31 21:20:03,586 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:20:03,586 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:20:11,829 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:20:11.8288983Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":6166366400,"load_duration":2559116400,"prompt_eval_count":279,"prompt_eval_duration":3348874100,"eval_count":2,"eval_duration":88944100}
+2025-07-31 21:20:11,829 DEBUG | Ollama.content = {}
+2025-07-31 21:20:11,830 DEBUG | Ollama.json = {}
+2025-07-31 21:20:11,830 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:20:11,830 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:20:50,183 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:20:50.1829314Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":36326409000,"load_duration":71311400,"prompt_eval_count":539,"prompt_eval_duration":35988051400,"eval_count":2,"eval_duration":133160100}
+2025-07-31 21:20:50,184 DEBUG | Ollama.content = {}
+2025-07-31 21:20:50,184 DEBUG | Ollama.json = {}
+2025-07-31 21:20:50,185 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 21:20:50,187 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:20:53,606 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:20:55,401 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:21:42,714 DEBUG | IA.input = 
+2025-07-31 21:21:42,714 DEBUG | IA.images = 1
+2025-07-31 21:21:42,714 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:21:42,715 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:21:47,407 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:21:47.4069506Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":2650172000,"load_duration":70901900,"prompt_eval_count":279,"prompt_eval_duration":2370300900,"eval_count":2,"eval_duration":78251300}
+2025-07-31 21:21:47,407 DEBUG | Ollama.content = {}
+2025-07-31 21:21:47,408 DEBUG | Ollama.json = {}
+2025-07-31 21:21:47,408 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:21:47,408 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:22:24,558 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:22:24.5578885Z","message":{"role":"assistant","content":"{}"},"done_reason":"stop","done":true,"total_duration":35100373500,"load_duration":67271500,"prompt_eval_count":539,"prompt_eval_duration":34769852700,"eval_count":2,"eval_duration":129652900}
+2025-07-31 21:22:24,558 DEBUG | Ollama.content = {}
+2025-07-31 21:22:24,558 DEBUG | Ollama.json = {}
+2025-07-31 21:22:24,560 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 21:22:24,562 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:22:27,896 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:27:50,967 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:27:58,688 DEBUG | IA.input = 
+2025-07-31 21:27:58,689 DEBUG | IA.images = 1
+2025-07-31 21:27:58,698 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:27:58,698 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:28:00,845 ERROR | Ollama.URLError: HTTP Error 400: Bad Request
+Traceback (most recent call last):
+  File "g:\Documentos G\Ing. Sotware\ExperimentosPy\NotasAdesivas\main.py", line 425, in ollama_chat_json
+    with urllib.request.urlopen(req, timeout=90) as resp:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 495, in open
+    response = meth(req, response)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 604, in http_response
+    response = self.parent.error(
+        'http', request, response, code, msg, hdrs)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 533, in error
+    return self._call_chain(*args)
+           ~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 466, in _call_chain
+    result = func(*args)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 613, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+
+2025-07-31 21:28:13,287 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:28:13,288 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:28:56,423 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T02:28:56.4226459Z","message":{"role":"assistant","content":"{\"title\": \"\", \"desc\": \"\", \"due\": \"\", \"color\": \"Sunset\", \"priority\": false}"},"done_reason":"stop","done":true,"total_duration":41069998100,"load_duration":2589642900,"prompt_eval_count":539,"prompt_eval_duration":36496932800,"eval_count":24,"eval_duration":1792453100}
+2025-07-31 21:28:56,423 DEBUG | Ollama.content = {"title": "", "desc": "", "due": "", "color": "Sunset", "priority": false}
+2025-07-31 21:28:56,423 DEBUG | Ollama.json = {'title': '', 'desc': '', 'due': '', 'color': 'Sunset', 'priority': False}
+2025-07-31 21:28:56,426 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': 'Sunset', 'priority': False}
+2025-07-31 21:28:56,427 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:29:21,055 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:29:42,429 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 21:29:56,054 DEBUG | IA.input = 
+2025-07-31 21:29:56,054 DEBUG | IA.images = 1
+2025-07-31 21:29:56,055 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 21:29:56,055 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 21:29:58,153 ERROR | Ollama.URLError: HTTP Error 400: Bad Request
+Traceback (most recent call last):
+  File "g:\Documentos G\Ing. Sotware\ExperimentosPy\NotasAdesivas\main.py", line 425, in ollama_chat_json
+    with urllib.request.urlopen(req, timeout=90) as resp:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 495, in open
+    response = meth(req, response)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 604, in http_response
+    response = self.parent.error(
+        'http', request, response, code, msg, hdrs)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 533, in error
+    return self._call_chain(*args)
+           ~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 466, in _call_chain
+    result = func(*args)
+  File "C:\Users\PC RYZEN  7\AppData\Local\Programs\Python\Python313\Lib\urllib\request.py", line 613, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+
+2025-07-31 22:20:09,779 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:20:24,728 DEBUG | IA.input = 
+2025-07-31 22:20:24,728 DEBUG | IA.images = 1
+2025-07-31 22:20:24,729 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:20:24,729 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 22:21:09,823 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:21:09.8230691Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":43019663700,"load_duration":2541332200,"prompt_eval_count":539,"prompt_eval_duration":37325801500,"eval_count":39,"eval_duration":3124112100}
+2025-07-31 22:21:09,824 DEBUG | Ollama.content = ```json
+{
+  "title": "",
+  "desc": "",
+  "due": "",
+  "color": "",
+  "priority": false
+}
+```
+2025-07-31 22:21:09,824 DEBUG | Ollama.json.recovered = {'title': '', 'desc': '', 'due': '', 'color': '', 'priority': False}
+2025-07-31 22:21:09,825 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 22:21:09,827 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:21:33,439 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:21:44,823 DEBUG | IA.input = 
+2025-07-31 22:21:44,824 DEBUG | IA.images = 1
+2025-07-31 22:21:44,824 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:21:44,824 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 22:22:27,009 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:22:27.0091082Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"\",\n  \"desc\": \"\",\n  \"due\": \"2025-08-01\",\n  \"color\": \"Naranja\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":40134724700,"load_duration":68729900,"prompt_eval_count":539,"prompt_eval_duration":35568323800,"eval_count":53,"eval_duration":4495370300}
+2025-07-31 22:22:27,010 DEBUG | Ollama.content = ```json
+{
+  "title": "",
+  "desc": "",
+  "due": "2025-08-01",
+  "color": "Naranja",
+  "priority": false
+}
+```
+2025-07-31 22:22:27,010 DEBUG | Ollama.json.recovered = {'title': '', 'desc': '', 'due': '2025-08-01', 'color': 'Naranja', 'priority': False}
+2025-07-31 22:22:27,012 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '2025-08-01', 'color': 'Sunset', 'priority': False}
+2025-07-31 22:22:27,014 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:26:17,447 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:26:21,329 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:26:35,761 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:26:45,695 DEBUG | IA.input = 
+2025-07-31 22:26:45,695 DEBUG | IA.images = 1
+2025-07-31 22:26:45,703 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:26:45,704 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+
+
+2025-07-31 22:27:26,267 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:27:26.2670579Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"\",\n  \"desc\": \"\",\n  \"due\": \"\",\n  \"color\": \"\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":38475564000,"load_duration":105456500,"prompt_eval_count":539,"prompt_eval_duration":35307019400,"eval_count":39,"eval_duration":3041752000}
+2025-07-31 22:27:26,268 DEBUG | Ollama.content = ```json
+{
+  "title": "",
+  "desc": "",
+  "due": "",
+  "color": "",
+  "priority": false
+}
+```
+2025-07-31 22:27:26,268 INFO | *** RESPUESTA MODELO ***
+```json
+{
+  "title": "",
+  "desc": "",
+  "due": "",
+  "color": "",
+  "priority": false
+}
+```
+*********************
+2025-07-31 22:27:26,268 DEBUG | Ollama.json.recovered = {'title': '', 'desc': '', 'due': '', 'color': '', 'priority': False}
+2025-07-31 22:27:26,270 DEBUG | IA.output = {'title': '(Sin título)', 'desc': '', 'due': '', 'color': None, 'priority': False}
+2025-07-31 22:27:26,271 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:27:49,751 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:30:10,905 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:30:18,173 DEBUG | IA.input = 
+2025-07-31 22:30:18,174 DEBUG | IA.images = 1
+2025-07-31 22:30:18,174 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:30:18,174 DEBUG | Ollama.prompt: Describe con detalle el contenido de la(s) imagen(es).
+2025-07-31 22:31:00,113 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:31:00.1129742Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"\",\n  \"desc\": \"Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro\",\n  \"due\": \"\",\n  \"color\": \"rojo\",\n  \"priority\": true\n}\n```"},"done_reason":"stop","done":true,"total_duration":39865246900,"load_duration":72646600,"prompt_eval_count":369,"prompt_eval_duration":33975795300,"eval_count":70,"eval_duration":5816300700}
+2025-07-31 22:31:00,114 DEBUG | Ollama.content = ```json
+{
+  "title": "",
+  "desc": "Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro",
+  "due": "",
+  "color": "rojo",
+  "priority": true
+}
+```
+2025-07-31 22:31:00,114 INFO | *** RESPUESTA MODELO ***
+```json
+{
+  "title": "",
+  "desc": "Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro",
+  "due": "",
+  "color": "rojo",
+  "priority": true
+}
+```
+*********************
+2025-07-31 22:31:00,114 DEBUG | Ollama.json.recovered = {'title': '', 'desc': 'Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro', 'due': '', 'color': 'rojo', 'priority': True}
+2025-07-31 22:31:00,114 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:31:00,114 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+{"title": "", "desc": "Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro", "due": "", "color": "rojo", "priority": true}
+
+2025-07-31 22:31:12,366 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:31:12.3661568Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Tarea: Segunda Guerra Mundial - Lecciones aprendidas\",\n  \"desc\": \"Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro.\",\n  \"due\": \"\",\n  \"color\": \"Sunset\",\n  \"priority\": true\n}\n```"},"done_reason":"stop","done":true,"total_duration":10202488000,"load_duration":69843500,"prompt_eval_count":592,"prompt_eval_duration":3247705900,"eval_count":80,"eval_duration":6883425800}
+2025-07-31 22:31:12,367 DEBUG | Ollama.content = ```json
+{
+  "title": "Tarea: Segunda Guerra Mundial - Lecciones aprendidas",
+  "desc": "Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro.",
+  "due": "",
+  "color": "Sunset",
+  "priority": true
+}
+```
+2025-07-31 22:31:12,367 INFO | *** RESPUESTA MODELO ***
+```json
+{
+  "title": "Tarea: Segunda Guerra Mundial - Lecciones aprendidas",
+  "desc": "Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro.",
+  "due": "",
+  "color": "Sunset",
+  "priority": true
+}
+```
+*********************
+2025-07-31 22:31:12,367 DEBUG | Ollama.json.recovered = {'title': 'Tarea: Segunda Guerra Mundial - Lecciones aprendidas', 'desc': 'Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro.', 'due': '', 'color': 'Sunset', 'priority': True}
+2025-07-31 22:31:12,369 DEBUG | IA.output = {'title': 'Tarea: Segunda Guerra Mundial - Lecciones aprendidas', 'desc': 'Crear una tarea sobre lo que pasó durante la Segunda Guerra Mundial y sobre ese cambio necesitamos para no cometer esos errores en el futuro.', 'due': '', 'color': 'Sunset', 'priority': True}
+2025-07-31 22:31:12,370 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:34:02,908 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:34:07,404 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:34:34,338 DEBUG | IA.input = Y que sea para mañana
+2025-07-31 22:34:34,338 DEBUG | IA.images = 1
+2025-07-31 22:34:34,339 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:34:34,339 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Y que sea para mañana
+
+2025-07-31 22:34:43,330 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:34:43.3299087Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Estudio de la Segunda Guerra Mundial\",\n  \"desc\": \"Análisis de los eventos de la Segunda Guerra Mundial para evitar errores futuros.\",\n  \"due\": \"2025-08-02\",\n  \"color\": \"Nature\",\n  \"priority\": true\n}\n```"},"done_reason":"stop","done":true,"total_duration":6905395800,"load_duration":67041000,"prompt_eval_count":545,"prompt_eval_duration":467395400,"eval_count":75,"eval_duration":6369802800}
+2025-07-31 22:34:43,330 DEBUG | Ollama.content = ```json
+{
+  "title": "Estudio de la Segunda Guerra Mundial",
+  "desc": "Análisis de los eventos de la Segunda Guerra Mundial para evitar errores futuros.",
+  "due": "2025-08-02",
+  "color": "Nature",
+  "priority": true
+}
+```
+2025-07-31 22:34:43,331 DEBUG | Ollama.json.recovered = {'title': 'Estudio de la Segunda Guerra Mundial', 'desc': 'Análisis de los eventos de la Segunda Guerra Mundial para evitar errores futuros.', 'due': '2025-08-02', 'color': 'Nature', 'priority': True}
+2025-07-31 22:34:43,332 DEBUG | IA.output = {'title': 'Estudio de la Segunda Guerra Mundial', 'desc': 'Análisis de los eventos de la Segunda Guerra Mundial para evitar errores futuros.', 'due': '2025-08-02', 'color': 'Nature', 'priority': True}
+2025-07-31 22:34:43,334 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:35:13,925 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:35:49,251 DEBUG | IA.input = Quiero la descripcion de esta foto para hacer un deber de modelado 3D
+2025-07-31 22:35:49,252 DEBUG | IA.images = 1
+2025-07-31 22:35:49,261 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:35:49,261 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+Quiero la descripcion de esta foto para hacer un deber de modelado 3D
+
+2025-07-31 22:36:34,012 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:36:34.0119011Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Modelado 3D de Jardín\",\n  \"desc\": \"Crear un modelo 3D basado en la imagen proporcionada, prestando atención a la iluminación, la vegetación y la estructura arquitectónica.\",\n  \"due\": \"\",\n  \"color\": \"Nature\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":42708567400,"load_duration":107016400,"prompt_eval_count":557,"prompt_eval_duration":35649285600,"eval_count":81,"eval_duration":6932281500}
+2025-07-31 22:36:34,013 DEBUG | Ollama.content = ```json
+{
+  "title": "Modelado 3D de Jardín",
+  "desc": "Crear un modelo 3D basado en la imagen proporcionada, prestando atención a la iluminación, la vegetación y la estructura arquitectónica.",
+  "due": "",
+  "color": "Nature",
+  "priority": false
+}
+```
+2025-07-31 22:36:34,013 DEBUG | Ollama.json.recovered = {'title': 'Modelado 3D de Jardín', 'desc': 'Crear un modelo 3D basado en la imagen proporcionada, prestando atención a la iluminación, la vegetación y la estructura arquitectónica.', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 22:36:34,015 DEBUG | IA.output = {'title': 'Modelado 3D de Jardín', 'desc': 'Crear un modelo 3D basado en la imagen proporcionada, prestando atención a la iluminación, la vegetación y la estructura arquitectónica.', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 22:36:34,016 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:36:47,661 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:36:57,012 DEBUG | IA.input = 
+2025-07-31 22:36:57,013 DEBUG | IA.images = 1
+2025-07-31 22:36:57,023 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:36:57,024 DEBUG | Ollama.prompt: Describe con detalle el contenido de la(s) imagen(es).
+2025-07-31 22:37:38,967 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:37:38.9667769Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"\",\n  \"desc\": \"Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.\",\n  \"due\": \"\",\n  \"color\": \"gris\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":39896216400,"load_duration":102318500,"prompt_eval_count":369,"prompt_eval_duration":33191724500,"eval_count":78,"eval_duration":6583004400}
+2025-07-31 22:37:38,967 DEBUG | Ollama.content = ```json
+{
+  "title": "",
+  "desc": "Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.",
+  "due": "",
+  "color": "gris",
+  "priority": false
+}
+```
+2025-07-31 22:37:38,968 DEBUG | Ollama.json.recovered = {'title': '', 'desc': 'Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.', 'due': '', 'color': 'gris', 'priority': False}
+2025-07-31 22:37:38,968 DEBUG | Ollama.request: model=gemma3:12b url=http://localhost:11434
+2025-07-31 22:37:38,968 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+{"title": "", "desc": "Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.", "due": "", "color": "gris", "priority": false}
+
+2025-07-31 22:37:51,651 DEBUG | Ollama.raw = {"model":"gemma3:12b","created_at":"2025-08-01T03:37:51.6504467Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Anime Character Portrait\",\n  \"desc\": \"Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.\",\n  \"due\": \"\",\n  \"color\": \"Verde\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":10623830100,"load_duration":102076700,"prompt_eval_count":600,"prompt_eval_duration":3415563300,"eval_count":83,"eval_duration":7085696300}
+2025-07-31 22:37:51,651 DEBUG | Ollama.content = ```json
+{
+  "title": "Anime Character Portrait",
+  "desc": "Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.",
+  "due": "",
+  "color": "Verde",
+  "priority": false
+}
+```
+2025-07-31 22:37:51,651 DEBUG | Ollama.json.recovered = {'title': 'Anime Character Portrait', 'desc': 'Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.', 'due': '', 'color': 'Verde', 'priority': False}
+2025-07-31 22:37:51,653 DEBUG | IA.output = {'title': 'Anime Character Portrait', 'desc': 'Imagen de un personaje de anime con cabello corto gris oscuro, ojos dorados, vistiendo una camisa blanca con un chaleco negro adornado con detalles dorados y una bufanda.', 'due': '', 'color': 'Nature', 'priority': False}
+2025-07-31 22:37:51,655 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:38:09,452 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:38:52,137 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:39:01,267 DEBUG | IA.input = 
+2025-07-31 22:39:01,267 DEBUG | IA.images = 1
+2025-07-31 22:39:01,276 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:39:01,276 DEBUG | Ollama.prompt: Describe con detalle el contenido de la(s) imagen(es).
+2025-07-31 22:39:07,703 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:39:07.7023248Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Un Inventor Misterioso\",\n  \"desc\": \"Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.\",\n  \"due\": \"\",\n  \"color\": \"Oro y Negro\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":4345771400,"load_duration":2807112700,"prompt_eval_count":369,"prompt_eval_duration":856610800,"eval_count":73,"eval_duration":632985900}
+2025-07-31 22:39:07,703 DEBUG | Ollama.content = ```json
+{
+  "title": "Un Inventor Misterioso",
+  "desc": "Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.",
+  "due": "",
+  "color": "Oro y Negro",
+  "priority": false
+}
+```
+2025-07-31 22:39:07,703 DEBUG | Ollama.json.recovered = {'title': 'Un Inventor Misterioso', 'desc': 'Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.', 'due': '', 'color': 'Oro y Negro', 'priority': False}
+2025-07-31 22:39:07,704 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:39:07,704 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+{"title": "Un Inventor Misterioso", "desc": "Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.", "due": "", "color": "Oro y Negro", "priority": false}
+
+2025-07-31 22:39:10,670 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:39:10.6699981Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Inventor Misterioso\",\n  \"desc\": \"Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.\",\n  \"due\": \"\",\n  \"color\": \"Oro y Negro\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":907487500,"load_duration":100144800,"prompt_eval_count":595,"prompt_eval_duration":167382000,"eval_count":72,"eval_duration":619553900}
+2025-07-31 22:39:10,670 DEBUG | Ollama.content = ```json
+{
+  "title": "Inventor Misterioso",
+  "desc": "Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.",
+  "due": "",
+  "color": "Oro y Negro",
+  "priority": false
+}
+```
+2025-07-31 22:39:10,671 DEBUG | Ollama.json.recovered = {'title': 'Inventor Misterioso', 'desc': 'Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.', 'due': '', 'color': 'Oro y Negro', 'priority': False}
+2025-07-31 22:39:10,673 DEBUG | IA.output = {'title': 'Inventor Misterioso', 'desc': 'Un joven inventor con cabello oscuro, ojos amarillos y ropa elegante en un ambiente de un taller o laboratorio con detalles steampunk.', 'due': '', 'color': None, 'priority': False}
+2025-07-31 22:39:10,675 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:39:17,723 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:39:37,051 DEBUG | PTT.bytes = 327680
+2025-07-31 22:39:45,220 DEBUG | IA.input = ni sino una tarea para poder generar unas nuevas ecuaciones en ecuaciones diferenciales para así estudiar para el examen
+2025-07-31 22:39:45,220 DEBUG | IA.images = 0
+2025-07-31 22:39:45,220 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:39:45,221 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+ni sino una tarea para poder generar unas nuevas ecuaciones en ecuaciones diferenciales para así estudiar para el examen
+
+2025-07-31 22:39:48,154 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:39:48.1544453Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Generar ecuaciones diferenciales\",\n  \"desc\": \"Necesita generar ecuaciones diferenciales para estudiar para el examen.\",\n  \"due\": \"\",\n  \"color\": \"Naranja\",\n  \"priority\": true\n}\n```"},"done_reason":"stop","done":true,"total_duration":882477200,"load_duration":66532700,"prompt_eval_count":253,"prompt_eval_duration":311546200,"eval_count":58,"eval_duration":501390400}
+2025-07-31 22:39:48,155 DEBUG | Ollama.content = ```json
+{
+  "title": "Generar ecuaciones diferenciales",
+  "desc": "Necesita generar ecuaciones diferenciales para estudiar para el examen.",
+  "due": "",
+  "color": "Naranja",
+  "priority": true
+}
+```
+2025-07-31 22:39:48,155 DEBUG | Ollama.json.recovered = {'title': 'Generar ecuaciones diferenciales', 'desc': 'Necesita generar ecuaciones diferenciales para estudiar para el examen.', 'due': '', 'color': 'Naranja', 'priority': True}
+2025-07-31 22:39:48,156 DEBUG | IA.output = {'title': 'Generar ecuaciones diferenciales', 'desc': 'Necesita generar ecuaciones diferenciales para estudiar para el examen.', 'due': '', 'color': 'Sunset', 'priority': True}
+2025-07-31 22:39:48,157 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:40:14,153 DEBUG | PTT.bytes = 532480
+2025-07-31 22:40:18,516 DEBUG | IA.input = necesito una tarea para el día de mañana uno de agosto del dos mil veinticinco en donde necesito unos ejercicios de ecuaciones diferenciales quiero que la nota este de color naranja y que sea de prioridad baja
+2025-07-31 22:40:18,516 DEBUG | IA.images = 0
+2025-07-31 22:40:18,516 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:40:18,516 DEBUG | Ollama.prompt: Hoy es 2025-07-31. Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+necesito una tarea para el día de mañana uno de agosto del dos mil veinticinco en donde necesito unos ejercicios de ecuaciones diferenciales quiero que la nota este de color naranja y que sea de prioridad baja
+
+2025-07-31 22:40:21,425 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:40:21.4242446Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Ejercicios Ecuaciones Diferenciales\",\n  \"desc\": \"Necesito unos ejercicios de ecuaciones diferenciales.\",\n  \"due\": \"2025-08-31\",\n  \"color\": \"Naranja\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":854575400,"load_duration":64470000,"prompt_eval_count":276,"prompt_eval_duration":193326200,"eval_count":70,"eval_duration":594910400}
+2025-07-31 22:40:21,425 DEBUG | Ollama.content = ```json
+{
+  "title": "Ejercicios Ecuaciones Diferenciales",
+  "desc": "Necesito unos ejercicios de ecuaciones diferenciales.",
+  "due": "2025-08-31",
+  "color": "Naranja",
+  "priority": false
+}
+```
+2025-07-31 22:40:21,425 DEBUG | Ollama.json.recovered = {'title': 'Ejercicios Ecuaciones Diferenciales', 'desc': 'Necesito unos ejercicios de ecuaciones diferenciales.', 'due': '2025-08-31', 'color': 'Naranja', 'priority': False}
+2025-07-31 22:40:21,426 DEBUG | IA.output = {'title': 'Ejercicios Ecuaciones Diferenciales', 'desc': 'Necesito unos ejercicios de ecuaciones diferenciales.', 'due': '2025-08-31', 'color': 'Sunset', 'priority': False}
+2025-07-31 22:40:21,428 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:40:53,131 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:40:55,434 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:41:12,381 DEBUG | PTT.bytes = 77824
+2025-07-31 22:41:29,602 DEBUG | IA.input = voy a hacer un  deber acerca de esas fotos de ahi
+2025-07-31 22:41:29,602 DEBUG | IA.images = 1
+2025-07-31 22:41:29,603 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:41:29,603 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+voy a hacer un  deber acerca de esas fotos de ahi
+
+2025-07-31 22:41:33,081 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:41:33.0809548Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Analizar Fotos\",\n  \"desc\": \"Evaluar las imágenes proporcionadas.\",\n  \"due\": \"2025-07-31\",\n  \"color\": \"Azul\",\n  \"priority\": true\n}\n```"},"done_reason":"stop","done":true,"total_duration":1436224700,"load_duration":67527600,"prompt_eval_count":553,"prompt_eval_duration":818461300,"eval_count":64,"eval_duration":548457300}
+2025-07-31 22:41:33,081 DEBUG | Ollama.content = ```json
+{
+  "title": "Analizar Fotos",
+  "desc": "Evaluar las imágenes proporcionadas.",
+  "due": "2025-07-31",
+  "color": "Azul",
+  "priority": true
+}
+```
+2025-07-31 22:41:33,081 DEBUG | Ollama.json.recovered = {'title': 'Analizar Fotos', 'desc': 'Evaluar las imágenes proporcionadas.', 'due': '2025-07-31', 'color': 'Azul', 'priority': True}
+2025-07-31 22:41:33,083 DEBUG | IA.output = {'title': 'Analizar Fotos', 'desc': 'Evaluar las imágenes proporcionadas.', 'due': '2025-07-31', 'color': 'Ocean', 'priority': True}
+2025-07-31 22:41:33,084 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:41:45,660 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:42:06,922 DEBUG | IA.input = 
+2025-07-31 22:42:06,923 DEBUG | IA.images = 1
+2025-07-31 22:42:06,924 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:42:06,924 DEBUG | Ollama.prompt: Describe con detalle el contenido de la(s) imagen(es).
+2025-07-31 22:42:10,864 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:42:10.8640201Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Minecraft\",\n  \"desc\": \"Minecraft en ejecución con una ventana de depuración que muestra información del juego, incluyendo el estado del mundo, el número de objetos intercambiados, el número de objetos agregados y la información del depurador.  Se pueden ver detalles sobre el número de bloques intercambiados, el número de objetos agregados y el estado de los depuradores.\",\n  \"due\": \"\",\n  \"color\": \"Verde\",\n  \"priority\": false\n}\n```"},"done_reason":"stop","done":true,"total_duration":1882323300,"load_duration":69375500,"prompt_eval_count":369,"prompt_eval_duration":827929400,"eval_count":114,"eval_duration":981776600}
+2025-07-31 22:42:10,864 DEBUG | Ollama.content = ```json
+{
+  "title": "Minecraft",
+  "desc": "Minecraft en ejecución con una ventana de depuración que muestra información del juego, incluyendo el estado del mundo, el número de objetos intercambiados, el número de objetos agregados y la información del depurador.  Se pueden ver detalles sobre el número de bloques intercambiados, el número de objetos agregados y el estado de los depuradores.",
+  "due": "",
+  "color": "Verde",
+  "priority": false
+}
+```
+2025-07-31 22:42:10,865 DEBUG | Ollama.json.recovered = {'title': 'Minecraft', 'desc': 'Minecraft en ejecución con una ventana de depuración que muestra información del juego, incluyendo el estado del mundo, el número de objetos intercambiados, el número de objetos agregados y la información del depurador.  Se pueden ver detalles sobre el número de bloques intercambiados, el número de objetos agregados y el estado de los depuradores.', 'due': '', 'color': 'Verde', 'priority': False}
+2025-07-31 22:42:10,865 DEBUG | Ollama.request: model=gemma3 url=http://localhost:11434
+2025-07-31 22:42:10,865 DEBUG | Ollama.prompt: Hoy es 2025-07-31. 
+Si se adjuntaron imágenes: léelas/trascribe su texto o interpreta lo que hay en la imagen, usa esa información como entrada y luego devuélveme SOLO un JSON con los campos abajo.
+Devuélveme SOLO un JSON con:
+  title   : string (si el usuario no da título, inventa uno breve y claro)
+  desc    : string (puede estar vacío)
+  due     : YYYY-MM-DD (si no hay fecha, vacío)
+  color   : uno de [Amarillo, Azul, Coral, Lavender, Morado, Naranja, Nature, Ocean, Sunset, Sunshine, Verde] (vacío si no menciona color)
+  priority: boolean (true si detectas urgente / prioridad / importante)
+
+Texto usuario:
+{"title": "Minecraft", "desc": "Minecraft en ejecución con una ventana de depuración que muestra información del juego, incluyendo el estado del mundo, el número de objetos intercambiados, el número de objetos agregados y la información del depurador.  Se pueden ver detalles sobre el número de bloques intercambiados, el número de objetos agregados y el estado de los depuradores.", "due": "", "color": "Verde", "priority": false}
+
+2025-07-31 22:42:14,063 DEBUG | Ollama.raw = {"model":"gemma3","created_at":"2025-08-01T03:42:14.0624353Z","message":{"role":"assistant","content":"```json\n{\n  \"title\": \"Minecraft Debug\",\n  \"desc\": \"Minecraft en ejecución con ventana de depuración mostrando información del juego.  Muestra detalles sobre intercambios de bloques, agregados de objetos y estado de depuradores.\",\n  \"due\": \"2025-07-31\",\n  \"color\": \"Morado\",\n  \"priority\": true\n}\n```"},"done_reason":"stop","done":true,"total_duration":1153535400,"load_duration":69673600,"prompt_eval_count":636,"prompt_eval_duration":214276000,"eval_count":90,"eval_duration":866469400}
+2025-07-31 22:42:14,063 DEBUG | Ollama.content = ```json
+{
+  "title": "Minecraft Debug",
+  "desc": "Minecraft en ejecución con ventana de depuración mostrando información del juego.  Muestra detalles sobre intercambios de bloques, agregados de objetos y estado de depuradores.",
+  "due": "2025-07-31",
+  "color": "Morado",
+  "priority": true
+}
+```
+2025-07-31 22:42:14,063 DEBUG | Ollama.json.recovered = {'title': 'Minecraft Debug', 'desc': 'Minecraft en ejecución con ventana de depuración mostrando información del juego.  Muestra detalles sobre intercambios de bloques, agregados de objetos y estado de depuradores.', 'due': '2025-07-31', 'color': 'Morado', 'priority': True}
+2025-07-31 22:42:14,065 DEBUG | IA.output = {'title': 'Minecraft Debug', 'desc': 'Minecraft en ejecución con ventana de depuración mostrando información del juego.  Muestra detalles sobre intercambios de bloques, agregados de objetos y estado de depuradores.', 'due': '2025-07-31', 'color': 'Lavender', 'priority': True}
+2025-07-31 22:42:14,066 DEBUG | Render: only_pending=False color_filter=Todos
+2025-07-31 22:42:23,843 DEBUG | Render: only_pending=False color_filter=Todos
