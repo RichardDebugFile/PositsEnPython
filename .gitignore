@@ -5,3 +5,7 @@ visor_gemma.py
 data
 __pycache__
 otracosa.py
+venv
+build
+dist
+PositsVirtuales.spec
