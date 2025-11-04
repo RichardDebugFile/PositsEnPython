@@ -1,0 +1,81 @@
+# ===================================
+# Posits Virtuales v2.0 - Requirements
+# ===================================
+
+# Core (incluido en Python estándar)
+# tkinter - GUI
+
+# ===================================
+# IA y Procesamiento de Lenguaje
+# ===================================
+
+# Reconocimiento de voz
+SpeechRecognition>=3.10.0
+
+# Audio (necesario para dictado por voz)
+# Windows: pip install pipwin && pipwin install pyaudio
+# macOS: brew install portaudio && pip install pyaudio
+# Linux: sudo apt-get install python3-pyaudio
+pyaudio>=0.2.13; platform_system != "Linux"
+
+# Motores de STT locales (elegir uno o ambos)
+faster-whisper>=0.9.0  # Recomendado: más rápido y preciso
+# vosk>=0.3.45         # Alternativa: más ligero
+
+# ===================================
+# Notificaciones del Sistema
+# ===================================
+
+# Windows
+win10toast>=0.9; platform_system == "Windows"
+
+# macOS y Linux usan comandos nativos (osascript, notify-send)
+
+# ===================================
+# Futuro: API Móvil (Opcional)
+# ===================================
+
+# Descomentar para habilitar API REST
+# fastapi>=0.104.0
+# uvicorn[standard]>=0.24.0
+# pydantic>=2.5.0
+# python-multipart>=0.0.6  # Para upload de archivos
+
+# ===================================
+# Desarrollo y Testing (Opcional)
+# ===================================
+
+# Descomentar para desarrollo
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# black>=23.11.0
+# flake8>=6.1.0
+# mypy>=1.7.0
+
+# ===================================
+# Notas de Instalación
+# ===================================
+
+# Instalación básica:
+# pip install -r requirements_v2.txt
+
+# Instalación con API móvil:
+# pip install -r requirements_v2.txt fastapi uvicorn pydantic
+
+# Instalación completa (dev):
+# pip install -r requirements_v2.txt pytest black flake8
+
+# ===================================
+# Ollama (IA Local)
+# ===================================
+
+# Ollama se instala por separado desde:
+# https://ollama.ai
+
+# Después de instalar Ollama, descargar modelo:
+# ollama pull gemma3
+
+# Configuración (opcional):
+# Crear archivo .env en la raíz con:
+# OLLAMA_URL=http://localhost:11434
+# OLLAMA_MODEL=gemma3

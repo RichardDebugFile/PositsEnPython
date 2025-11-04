@@ -9,3 +9,7 @@ venv
 build
 dist
 PositsVirtuales.spec
+docs
+*.log
+.claude
+nul
