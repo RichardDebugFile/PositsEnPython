@@ -63,7 +63,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         # Inicializar reproductor de música
         try:
             self.music_player = MusicPlayer()
-        except Exception as e:
+        except (ImportError, OSError, RuntimeError) as e:
             print(f"[WARNING] No se pudo inicializar el reproductor de música: {e}")
             self.music_player = None
         self.geometry("1150x750")  # Más ancho para panel de gamificación expandido
@@ -102,31 +102,57 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.after(400, self.open_daily_mission_posits)  # Abrir posits de misiones diarias
 
     def _create_header(self):
-        header = tk.Frame(self, bg=GRADIENTS["Primary"][0], relief="flat", bd=0); header.pack(fill="x")
-        title_frame = tk.Frame(header, bg=GRADIENTS["Primary"][0]); title_frame.pack(fill="x", padx=16, pady=12)
-        tk.Label(title_frame, text=APP_NAME, bg=GRADIENTS["Primary"][0], fg="white",
-                 font=("Segoe UI", 16, "bold")).pack(side="left")
-        stats_frame = tk.Frame(header, bg=GRADIENTS["Primary"][0]); stats_frame.pack(fill="x", padx=16, pady=(0,12))
-        _, self.total_label = create_stat_card(stats_frame, "Total", 0, "Primary", "📋")
-        _, self.completed_label = create_stat_card(stats_frame, "Completadas", 0, "Success", "✅")
-        _, self.pending_label = create_stat_card(stats_frame, "Pendientes", 0, "Warning", "⏳")
+        header = tk.Frame(self, bg=GRADIENTS["Primary"][0], relief="flat", bd=0)
+        header.pack(fill="x")
+        title_frame = tk.Frame(header, bg=GRADIENTS["Primary"][0])
+        title_frame.pack(fill="x", padx=16, pady=12)
+        tk.Label(
+            title_frame,
+            text=APP_NAME,
+            bg=GRADIENTS["Primary"][0],
+            fg="white",
+            font=("Segoe UI", 16, "bold")
+        ).pack(side="left")
+        stats_frame = tk.Frame(header, bg=GRADIENTS["Primary"][0])
+        stats_frame.pack(fill="x", padx=16, pady=(0, 12))
+        _, self.total_label = create_stat_card(
+            stats_frame, "Total", 0, "Primary", "📋"
+        )
+        _, self.completed_label = create_stat_card(
+            stats_frame, "Completadas", 0, "Success", "✅"
+        )
+        _, self.pending_label = create_stat_card(
+            stats_frame, "Pendientes", 0, "Warning", "⏳"
+        )
         update_statistics(self)
 
     def _create_toolbar(self):
-        toolbar = tk.Frame(self, bg=GRADIENTS["Card"][0], relief="flat", bd=0); toolbar.pack(fill="x", padx=8, pady=8)
+        toolbar = tk.Frame(self, bg=GRADIENTS["Card"][0], relief="flat", bd=0)
+        toolbar.pack(fill="x", padx=8, pady=8)
         center = create_centered_row(toolbar)
 
-        PillButton(center, "Nueva Tarea", self.open_add_dialog, "Primary", "normal", "➕").pack(side="left", padx=6)
+        PillButton(
+            center, "Nueva Tarea", self.open_add_dialog, "Primary", "normal", "➕"
+        ).pack(side="left", padx=6)
 
         self.var_only_pending = tk.BooleanVar(value=False)
-        tk.Checkbutton(center, text="👁️ Solo Pendientes", variable=self.var_only_pending,
-                       command=self.render_tasks, bg=center.cget("bg"),
-                       font=("Segoe UI", 9, "bold")).pack(side="left", padx=8)
+        tk.Checkbutton(
+            center,
+            text="👁️ Solo Pendientes",
+            variable=self.var_only_pending,
+            command=self.render_tasks,
+            bg=center.cget("bg"),
+            font=("Segoe UI", 9, "bold")
+        ).pack(side="left", padx=8)
 
-        PillButton(center, "Abrir Notas", self.reopen_notes, "Secondary", "normal", "📝").pack(side="left", padx=6)
+        PillButton(
+            center, "Abrir Notas", self.reopen_notes, "Secondary", "normal", "📝"
+        ).pack(side="left", padx=6)
 
         # --- Botón IA (Ollama) ---
-        PillButton(center, "IA (Ollama)", self.open_ollama_dialog, "Success", "normal", "🤖").pack(side="left", padx=6)
+        PillButton(
+            center, "IA (Ollama)", self.open_ollama_dialog, "Success", "normal", "🤖"
+        ).pack(side="left", padx=6)
 
         # Ordenamiento
         sort_frame = tk.Frame(center, bg=center.cget("bg"))
@@ -149,13 +175,22 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.cb_color_filter = ttk.Combobox(self.color_filter_frame, textvariable=self.var_color_filter,
                                             state="readonly", width=12, values=["Todos"])
         self.cb_color_filter.pack(side="left")
-        self.cb_color_filter.bind("<<ComboboxSelected>>", lambda e: self.render_tasks())
+        self.cb_color_filter.bind(
+            "<<ComboboxSelected>>", lambda e: self.render_tasks()
+        )
 
         self.var_topmost = tk.BooleanVar(value=True)
-        def _toggle_topmost(): self.attributes("-topmost", self.var_topmost.get())
-        tk.Checkbutton(center, text="Siempre arriba", variable=self.var_topmost,
-                       command=_toggle_topmost, bg=center.cget("bg"),
-                       font=("Segoe UI", 9, "bold")).pack(side="left", padx=8)
+
+        def _toggle_topmost():
+            self.attributes("-topmost", self.var_topmost.get())
+        tk.Checkbutton(
+            center,
+            text="Siempre arriba",
+            variable=self.var_topmost,
+            command=_toggle_topmost,
+            bg=center.cget("bg"),
+            font=("Segoe UI", 9, "bold")
+        ).pack(side="left", padx=8)
         _toggle_topmost()
 
     def _create_content_area(self):
@@ -163,10 +198,17 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         content_frame = tk.Frame(self.tasks_column, bg=self.BG)
         content_frame.pack(fill="both", expand=True)
 
-        self.canvas = tk.Canvas(content_frame, bg=self.BG, highlightthickness=0, relief="flat", bd=0)
-        self.scrollbar = ttk.Scrollbar(content_frame, orient="vertical", command=self.canvas.yview)
+        self.canvas = tk.Canvas(
+            content_frame, bg=self.BG, highlightthickness=0, relief="flat", bd=0
+        )
+        self.scrollbar = ttk.Scrollbar(
+            content_frame, orient="vertical", command=self.canvas.yview
+        )
         self.task_frame = tk.Frame(self.canvas, bg=self.BG)
-        self.task_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.task_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
         self.canvas.create_window((0, 0), window=self.task_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.pack(side="left", fill="both", expand=True)
@@ -176,10 +218,15 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     def _bind_mousewheel(self):
         def _on_mousewheel(e):
             delta = e.delta
-            if delta == 0: return
+            if delta == 0:
+                return
             self.canvas.yview_scroll(int(-1*(delta/120)), "units")
-        def _on_mousewheel_linux_up(e): self.canvas.yview_scroll(-3, "units")
-        def _on_mousewheel_linux_down(e): self.canvas.yview_scroll(3, "units")
+
+        def _on_mousewheel_linux_up(e):
+            self.canvas.yview_scroll(-3, "units")
+
+        def _on_mousewheel_linux_down(e):
+            self.canvas.yview_scroll(3, "units")
         self.canvas.bind_all("<MouseWheel>", _on_mousewheel)
         self.canvas.bind_all("<Button-4>", _on_mousewheel_linux_up)
         self.canvas.bind_all("<Button-5>", _on_mousewheel_linux_down)
@@ -195,19 +242,44 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.gamification_panel.pack(fill="both", expand=True)
 
     def _create_footer(self):
-        footer = tk.Frame(self, bg=GRADIENTS["Card"][0], relief="flat", bd=0); footer.pack(fill="x", padx=8, pady=8)
-        self.footer_label = tk.Label(footer, text="✨ 0 tareas • 0 completadas",
-                                     bg=GRADIENTS["Card"][0], fg=MODERN_COLORS["TextLight"], font=("Segoe UI", 9))
+        footer = tk.Frame(self, bg=GRADIENTS["Card"][0], relief="flat", bd=0)
+        footer.pack(fill="x", padx=8, pady=8)
+        self.footer_label = tk.Label(
+            footer,
+            text="✨ 0 tareas • 0 completadas",
+            bg=GRADIENTS["Card"][0],
+            fg=MODERN_COLORS["TextLight"],
+            font=("Segoe UI", 9)
+        )
         self.footer_label.pack(pady=4)
 
     # ---------- Diálogo agregar ----------
     def open_add_dialog(self):
         ModernAddTaskDialog(self, self._on_add)
 
-    def open_add_dialog_prefilled(self, title: str, desc: str, due: date, priority: bool, color: str):
-        ModernAddTaskDialog(self, self._on_add, preset={"title": title, "desc": desc, "due": due, "priority": priority, "color": color})
+    def open_add_dialog_prefilled(
+        self, title: str, desc: str, due: date, priority: bool, color: str
+    ):
+        ModernAddTaskDialog(
+            self,
+            self._on_add,
+            preset={
+                "title": title,
+                "desc": desc,
+                "due": due,
+                "priority": priority,
+                "color": color
+            }
+        )
 
-    def _on_add(self, title: str, desc: str, due: date, priority: bool, color: str | None = None):
+    def _on_add(
+        self,
+        title: str,
+        desc: str,
+        due: date,
+        priority: bool,
+        color: str | None = None
+    ):
         self.store.add(title, desc, due, priority, color=color)
         # Asegúrate de que la nueva tarea sea visible aunque haya un filtro activo:
         if hasattr(self, "var_color_filter"):
@@ -293,55 +365,125 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         body = tk.Frame(card, bg=GRADIENTS["Card"][0])
         body.pack(side="left", fill="both", expand=True)
 
-        header = tk.Frame(body, bg=GRADIENTS["Card"][0]); header.pack(fill="x", padx=12, pady=8)
+        header = tk.Frame(body, bg=GRADIENTS["Card"][0])
+        header.pack(fill="x", padx=12, pady=8)
 
         var_done = tk.BooleanVar(value=task.done)
-        tk.Checkbutton(header, variable=var_done,
-                       command=lambda t=tid: self._toggle_done_with_update_by_id(t),
-                       bg=GRADIENTS["Card"][0], font=("Segoe UI", 12)).pack(side="left")
+        tk.Checkbutton(
+            header,
+            variable=var_done,
+            command=lambda t=tid: self._toggle_done_with_update_by_id(t),
+            bg=GRADIENTS["Card"][0],
+            font=("Segoe UI", 12)
+        ).pack(side="left")
 
         title_font = ("Segoe UI", 12, "bold")
-        title_color = MODERN_COLORS["Text"] if not task.done else MODERN_COLORS["TextLight"]
+        title_color = (
+            MODERN_COLORS["Text"] if not task.done else MODERN_COLORS["TextLight"]
+        )
 
-        title_frame = tk.Frame(header, bg=GRADIENTS["Card"][0]); title_frame.pack(side="left", fill="x", expand=True, padx=8)
-        lbl_title = tk.Label(title_frame, text=task.title, bg=GRADIENTS["Card"][0], fg=title_color,
-                             font=title_font, anchor="w", wraplength=460, justify="left", cursor="hand2")
+        title_frame = tk.Frame(header, bg=GRADIENTS["Card"][0])
+        title_frame.pack(side="left", fill="x", expand=True, padx=8)
+        lbl_title = tk.Label(
+            title_frame,
+            text=task.title,
+            bg=GRADIENTS["Card"][0],
+            fg=title_color,
+            font=title_font,
+            anchor="w",
+            wraplength=460,
+            justify="left",
+            cursor="hand2"
+        )
         lbl_title.pack(fill="x")
-        lbl_title.bind("<Double-Button-1>", lambda e, t=tid: self.open_quick_sticky_by_id(t))  # overlay
+        lbl_title.bind(
+            "<Double-Button-1>", lambda e, t=tid: self.open_quick_sticky_by_id(t)
+        )
         # Botón extra para abrir editor completo sigue en acciones
 
         if task.priority:
-            tk.Label(header, text="⭐ PRIORIDAD", bg=GRADIENTS["Warning"][0], fg="white",
-                     font=("Segoe UI", 8, "bold"), padx=6, pady=2).pack(side="right")
+            tk.Label(
+                header,
+                text="⭐ PRIORIDAD",
+                bg=GRADIENTS["Warning"][0],
+                fg="white",
+                font=("Segoe UI", 8, "bold"),
+                padx=6,
+                pady=2
+            ).pack(side="right")
 
-        content = tk.Frame(body, bg=GRADIENTS["Card"][0]); content.pack(fill="x", padx=12, pady=(0,8))
+        content = tk.Frame(body, bg=GRADIENTS["Card"][0])
+        content.pack(fill="x", padx=12, pady=(0, 8))
         if task.desc:
             desc_font = ("Segoe UI", 10, "italic" if task.done else "normal")
-            desc_fg = MODERN_COLORS["TextLight"] if task.done else MODERN_COLORS["Text"]
-            tk.Label(content, text=task.desc, bg=GRADIENTS["Card"][0], fg=desc_fg,
-                     font=desc_font, anchor="w", wraplength=460, justify="left").pack(fill="x", pady=(0,8))
+            desc_fg = (
+                MODERN_COLORS["TextLight"] if task.done else MODERN_COLORS["Text"]
+            )
+            tk.Label(
+                content,
+                text=task.desc,
+                bg=GRADIENTS["Card"][0],
+                fg=desc_fg,
+                font=desc_font,
+                anchor="w",
+                wraplength=460,
+                justify="left"
+            ).pack(fill="x", pady=(0, 8))
 
-        footer = tk.Frame(body, bg=GRADIENTS["Card"][0]); footer.pack(fill="x", padx=12, pady=(0,8))
+        footer = tk.Frame(body, bg=GRADIENTS["Card"][0])
+        footer.pack(fill="x", padx=12, pady=(0, 8))
         try:
-            start_d = task.start if isinstance(task.start, date) else parse_date(task.start)
-            due_d = task.due if isinstance(task.due, date) else parse_date(task.due)
+            due_d = (
+                task.due if isinstance(task.due, date) else parse_date(task.due)
+            )
         except Exception:
-            start_d = due_d = now
+            due_d = now
 
         due_txt = f"📅 {fmt_date(due_d)}"
         overdue = (due_d <= now)
-        due_fg = MODERN_COLORS["Danger"] if overdue and not task.done else MODERN_COLORS["TextLight"]
-        tk.Label(footer, text=due_txt, bg=GRADIENTS["Card"][0], fg=due_fg, font=("Segoe UI", 9)).pack(side="left")
+        due_fg = (
+            MODERN_COLORS["Danger"]
+            if overdue and not task.done
+            else MODERN_COLORS["TextLight"]
+        )
+        tk.Label(
+            footer,
+            text=due_txt,
+            bg=GRADIENTS["Card"][0],
+            fg=due_fg,
+            font=("Segoe UI", 9)
+        ).pack(side="left")
 
-        actions = tk.Frame(footer, bg=GRADIENTS["Card"][0]); actions.pack(side="right")
+        actions = tk.Frame(footer, bg=GRADIENTS["Card"][0])
+        actions.pack(side="right")
         priority_icon = "⭐" if task.priority else "☆"
-        self._create_small_button(actions, priority_icon, lambda t=tid: self._toggle_priority_with_update_by_id(t), "Warning")
-        self._create_small_button(actions, "📝", lambda t=tid: self.open_note_by_id(t), "Primary")
-        self._create_small_button(actions, "🗑️", lambda t=tid: self._delete_task_with_update_by_id(t), "Danger")
+        self._create_small_button(
+            actions,
+            priority_icon,
+            lambda t=tid: self._toggle_priority_with_update_by_id(t),
+            "Warning"
+        )
+        self._create_small_button(
+            actions, "📝", lambda t=tid: self.open_note_by_id(t), "Primary"
+        )
+        self._create_small_button(
+            actions, "🗑️", lambda t=tid: self._delete_task_with_update_by_id(t), "Danger"
+        )
 
     def _create_small_button(self, parent, icon, command, color):
-        btn = tk.Label(parent, text=icon, bg=GRADIENTS[color][0], fg="white",
-                       font=("Segoe UI", 10), padx=6, pady=2, relief="flat", bd=0, takefocus=1, cursor="hand2")
+        btn = tk.Label(
+            parent,
+            text=icon,
+            bg=GRADIENTS[color][0],
+            fg="white",
+            font=("Segoe UI", 10),
+            padx=6,
+            pady=2,
+            relief="flat",
+            bd=0,
+            takefocus=1,
+            cursor="hand2"
+        )
         btn.pack(side="left", padx=2)
         btn.bind("<Button-1>", lambda e: command())
         btn.bind("<Return>", lambda e: command())
@@ -350,28 +492,39 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
     def _toggle_done_with_update_by_id(self, tid: str):
         idx = self.store.index_by_id(tid)
-        if idx < 0: return
+        if idx < 0:
+            return
         self.store.toggle_done(idx)
-        self.render_tasks(); update_statistics(self)
+        self.render_tasks()
+        update_statistics(self)
 
     def _toggle_priority_with_update_by_id(self, tid: str):
         idx = self.store.index_by_id(tid)
-        if idx < 0: return
+        if idx < 0:
+            return
         self.store.toggle_priority(idx)
-        self.render_tasks(); update_statistics(self)
+        self.render_tasks()
+        update_statistics(self)
 
     def _delete_task_with_update_by_id(self, tid: str):
         idx = self.store.index_by_id(tid)
-        if idx < 0: return
+        if idx < 0:
+            return
         self.delete_task_by_index(idx, tid)
         update_statistics(self)
 
     def _get_task_border_color(self, task, now: date) -> str:
-        if task.done: return MODERN_COLORS["Success"]
-        if task.priority: return MODERN_COLORS["Warning"]
+        if task.done:
+            return MODERN_COLORS["Success"]
+        if task.priority:
+            return MODERN_COLORS["Warning"]
         try:
-            start_d = task.start if isinstance(task.start, date) else parse_date(task.start)
-            due_d = task.due if isinstance(task.due, date) else parse_date(task.due)
+            due_d = (
+                task.due if isinstance(task.due, date) else parse_date(task.due)
+            )
+            start_d = (
+                task.start if isinstance(task.start, date) else parse_date(task.start)
+            )
             return urgency_color(start_d, due_d, now)
         except Exception:
             return MODERN_COLORS["TextLight"]
@@ -379,23 +532,30 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     def delete_task_by_index(self, idx: int, tid: str):
         win = self.note_windows.pop(tid, None)
         if win is not None and win.winfo_exists():
-            try: win.destroy()
-            except Exception: pass
+            try:
+                win.destroy()
+            except Exception:
+                pass
         qwin = self.quick_windows.pop(tid, None)
         if qwin is not None and qwin.winfo_exists():
-            try: qwin.destroy()
-            except Exception: pass
+            try:
+                qwin.destroy()
+            except Exception:
+                pass
         self.store.delete(idx)
         self.render_tasks()
 
     # ---------- Notas flotantes (editor) ----------
     def open_note_by_id(self, tid: str):
         idx = self.store.index_by_id(tid)
-        if idx < 0: return
+        if idx < 0:
+            return
         task = self.store.tasks[idx]
         win = self.note_windows.get(tid)
         if win and win.winfo_exists():
-            win.deiconify(); win.lift(); return
+            win.deiconify()
+            win.lift()
+            return
         task.open = True
         self.store.save_throttled()
         win = ModernNoteWindow(self, tid, task)
@@ -404,23 +564,30 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     # ---------- Posit rápido (overlay) ----------
     def open_quick_sticky_by_id(self, tid: str):
         idx = self.store.index_by_id(tid)
-        if idx < 0: return
+        if idx < 0:
+            return
         task = self.store.tasks[idx]
         qwin = self.quick_windows.get(tid)
         if qwin and qwin.winfo_exists():
-            qwin.deiconify(); qwin.lift(); return
+            qwin.deiconify()
+            qwin.lift()
+            return
         qwin = QuickStickyWindow(self, task)
         self.quick_windows[tid] = qwin
 
     def reopen_notes(self):
         for t in self.store.tasks:
             if t.open or t.pinned:
-                try: self.open_note_by_id(t.id)
-                except Exception: pass
+                try:
+                    self.open_note_by_id(t.id)
+                except Exception:
+                    pass
 
     def open_daily_mission_posits(self):
         """Abre automáticamente posits de las misiones diarias al iniciar"""
-        print("[DEBUG] ===== Iniciando apertura de posits de misiones diarias =====")
+        print(
+            "[DEBUG] ===== Iniciando apertura de posits de misiones diarias ====="
+        )
         import json
         import os
         from .models.task import Task
@@ -498,7 +665,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
                 self.quick_windows[task_id] = qwin
                 idx += 1
 
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             print(f"[WARNING] No se pudieron abrir posits de misiones: {e}")
 
 

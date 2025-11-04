@@ -1,0 +1,11 @@
+[MASTER]
+init-hook = import sys; sys.path.append("src")
+ignore-patterns = ^data/.*, ^docs/.*
+
+[REPORTS]
+score = y
+output-format = text
+
+[MESSAGE CONTROL]
+
+disable = C0114,C0115,C0116  
