@@ -3,10 +3,12 @@
 """
 Servicio de reproducción de música de fondo
 Soporta MP3, WAV, OGG, FLAC con playlist
+Los archivos se copian a data/music/ para independencia de ubicación
 """
 
 import json
 import os
+import shutil
 from pathlib import Path
 from typing import Optional, List, Callable
 import pygame
@@ -17,8 +19,9 @@ class MusicPlayer:
     Gestor de reproducción de música de fondo con playlist y persistencia
     """
 
-    def __init__(self, config_file: str = "data/music_config.json"):
+    def __init__(self, config_file: str = "data/music_config.json", music_dir: str = "data/music"):
         self.config_file = config_file
+        self.music_dir = music_dir
         self.playlist: List[str] = []  # Lista de archivos en la playlist
         self.current_index: int = 0  # Índice de la canción actual
         self.main_track: Optional[str] = None  # Canción principal (loop infinito)
@@ -27,6 +30,9 @@ class MusicPlayer:
         self.is_playing: bool = False
         self.is_paused: bool = False
         self.on_track_change: Optional[Callable] = None  # Callback cuando cambia la canción
+
+        # Crear carpeta de música si no existe
+        os.makedirs(self.music_dir, exist_ok=True)
 
         # Inicializar pygame mixer
         try:
@@ -236,12 +242,49 @@ class MusicPlayer:
 
     # ======================== MÉTODOS DE PLAYLIST ========================
 
-    def add_to_playlist(self, file_path: str) -> bool:
+    def _copy_music_file(self, source_path: str) -> Optional[str]:
         """
-        Agrega una canción a la playlist
+        Copia un archivo de música a la carpeta local data/music/
 
         Args:
-            file_path: Ruta al archivo de audio
+            source_path: Ruta original del archivo
+
+        Returns:
+            Ruta del archivo copiado, o None si hubo error
+        """
+        try:
+            source = Path(source_path)
+            if not source.exists():
+                return None
+
+            # Crear nombre único si ya existe
+            dest_name = source.name
+            dest_path = Path(self.music_dir) / dest_name
+
+            # Si ya existe el archivo con el mismo nombre, agregar número
+            counter = 1
+            while dest_path.exists():
+                stem = source.stem
+                suffix = source.suffix
+                dest_name = f"{stem}_{counter}{suffix}"
+                dest_path = Path(self.music_dir) / dest_name
+                counter += 1
+
+            # Copiar archivo
+            shutil.copy2(source, dest_path)
+            print(f"[INFO] Archivo copiado: {dest_name}")
+            return str(dest_path)
+
+        except Exception as e:
+            print(f"[ERROR] No se pudo copiar el archivo: {e}")
+            return None
+
+    def add_to_playlist(self, file_path: str) -> bool:
+        """
+        Agrega una canción a la playlist (copiándola a data/music/)
+
+        Args:
+            file_path: Ruta al archivo de audio original
 
         Returns:
             True si se agregó correctamente
@@ -250,18 +293,26 @@ class MusicPlayer:
             print(f"[ERROR] Archivo no encontrado: {file_path}")
             return False
 
-        if file_path in self.playlist:
-            print(f"[WARNING] La canción ya está en la playlist")
+        # Verificar si ya existe por nombre (no por ruta completa)
+        filename = Path(file_path).name
+        for existing in self.playlist:
+            if Path(existing).name == filename:
+                print(f"[WARNING] Ya existe una cancion con ese nombre en la playlist")
+                return False
+
+        # Copiar archivo a carpeta local
+        copied_path = self._copy_music_file(file_path)
+        if not copied_path:
             return False
 
-        self.playlist.append(file_path)
+        self.playlist.append(copied_path)
         self.save_config()
-        print(f"[INFO] Agregado a playlist: {Path(file_path).name}")
+        print(f"[INFO] Agregado a playlist: {Path(copied_path).name}")
         return True
 
     def remove_from_playlist(self, index: int) -> bool:
         """
-        Elimina una canción de la playlist por índice
+        Elimina una canción de la playlist por índice y borra el archivo físico
 
         Args:
             index: Índice de la canción a eliminar
@@ -270,11 +321,24 @@ class MusicPlayer:
             True si se eliminó correctamente
         """
         if index < 0 or index >= len(self.playlist):
-            print(f"[ERROR] Índice fuera de rango: {index}")
+            print(f"[ERROR] Indice fuera de rango: {index}")
             return False
 
         removed = self.playlist.pop(index)
         print(f"[INFO] Eliminado de playlist: {Path(removed).name}")
+
+        # Eliminar archivo físico si está en la carpeta de música
+        try:
+            removed_path = Path(removed)
+            if removed_path.exists() and str(removed_path.parent) == str(Path(self.music_dir).absolute()):
+                # Solo eliminar si no está siendo usado como main_track
+                if self.main_track != removed:
+                    removed_path.unlink()
+                    print(f"[INFO] Archivo eliminado: {removed_path.name}")
+                else:
+                    print(f"[WARNING] No se elimino el archivo porque es la cancion principal")
+        except Exception as e:
+            print(f"[WARNING] No se pudo eliminar el archivo: {e}")
 
         # Ajustar el índice actual si es necesario
         if self.current_index >= len(self.playlist) and self.playlist:

@@ -16,8 +16,8 @@ except ImportError:
     TkinterDnD = None
     DND_AVAILABLE = False
 
-from .config import APP_NAME, MODERN_COLORS, GRADIENTS, COLOR_LABELS, LABEL_TO_KEY, VIBRANT_COLORS
-from .models import TaskStore
+from .config import APP_NAME, MODERN_COLORS, GRADIENTS, COLOR_LABELS, LABEL_TO_KEY, VIBRANT_COLORS, PRIORITY_LEVELS
+from .models import TaskStore, PomodoroManager
 from .utils.dates import today_date, fmt_date, parse_date
 from .utils.logger import logger
 from .utils.colors import urgency_color
@@ -29,6 +29,7 @@ from .ui import (
     ModernNoteWindow,
     QuickStickyWindow,
     GamificationPanel,
+    PomodoroWindow,
 )
 from .dialogs import ModernAddTaskDialog, OllamaCaptureDialog
 from .services import NotificationService
@@ -66,6 +67,11 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         except (ImportError, OSError, RuntimeError) as e:
             print(f"[WARNING] No se pudo inicializar el reproductor de música: {e}")
             self.music_player = None
+
+        # Inicializar gestor de Pomodoro
+        self.pomodoro_manager = PomodoroManager()
+        self.pomodoro_window = None
+
         self.geometry("1150x750")  # Más ancho para panel de gamificación expandido
         self.minsize(1150, 700)  # Tamaño mínimo aumentado para ver todo
         self.resizable(True, True)
@@ -94,7 +100,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.quick_windows: dict[str, QuickStickyWindow] = {}
 
         # Iniciar servicio de notificaciones
-        self.notification_service = NotificationService(self.store)
+        self.notification_service = NotificationService(lambda: self.store.tasks)
         self.notification_service.start()
 
         self.render_tasks()
@@ -152,6 +158,16 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         # --- Botón IA (Ollama) ---
         PillButton(
             center, "IA (Ollama)", self.open_ollama_dialog, "Success", "normal", "🤖"
+        ).pack(side="left", padx=6)
+
+        # --- Botón Descargar Música ---
+        PillButton(
+            center, "Descargar Música", self.open_music_downloader, "Info", "normal", "🎵"
+        ).pack(side="left", padx=6)
+
+        # --- Botón Pomodoro ---
+        PillButton(
+            center, "Pomodoro", self.open_pomodoro, "Warning", "normal", "🍅"
         ).pack(side="left", padx=6)
 
         # Ordenamiento
@@ -216,6 +232,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self._bind_mousewheel()
 
     def _bind_mousewheel(self):
+        """Vincula el scroll del mouse solo cuando está sobre el canvas"""
         def _on_mousewheel(e):
             delta = e.delta
             if delta == 0:
@@ -227,9 +244,22 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
         def _on_mousewheel_linux_down(e):
             self.canvas.yview_scroll(3, "units")
-        self.canvas.bind_all("<MouseWheel>", _on_mousewheel)
-        self.canvas.bind_all("<Button-4>", _on_mousewheel_linux_up)
-        self.canvas.bind_all("<Button-5>", _on_mousewheel_linux_down)
+
+        def _on_enter(e):
+            """Cuando el mouse entra al canvas, activar scroll"""
+            self.canvas.bind_all("<MouseWheel>", _on_mousewheel)
+            self.canvas.bind_all("<Button-4>", _on_mousewheel_linux_up)
+            self.canvas.bind_all("<Button-5>", _on_mousewheel_linux_down)
+
+        def _on_leave(e):
+            """Cuando el mouse sale del canvas, desactivar scroll"""
+            self.canvas.unbind_all("<MouseWheel>")
+            self.canvas.unbind_all("<Button-4>")
+            self.canvas.unbind_all("<Button-5>")
+
+        # Vincular eventos de entrada/salida
+        self.canvas.bind("<Enter>", _on_enter)
+        self.canvas.bind("<Leave>", _on_leave)
 
     def _create_gamification_panel(self):
         """Crea el panel de gamificación con XP, nivel y misiones diarias"""
@@ -258,7 +288,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         ModernAddTaskDialog(self, self._on_add)
 
     def open_add_dialog_prefilled(
-        self, title: str, desc: str, due: date, priority: bool, color: str
+        self, title: str, desc: str, due: date, priority: str, color: str
     ):
         ModernAddTaskDialog(
             self,
@@ -277,7 +307,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         title: str,
         desc: str,
         due: date,
-        priority: bool,
+        priority: str,
         color: str | None = None
     ):
         self.store.add(title, desc, due, priority, color=color)
@@ -292,6 +322,25 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     def open_ollama_dialog(self):
         OllamaCaptureDialog(self, self._on_add)
 
+    # ---------- Descargador de Música ----------
+    def open_music_downloader(self):
+        """Abre diálogo de descarga de música desde YouTube"""
+        from .dialogs import MusicDownloaderDialog
+        MusicDownloaderDialog(self, self.music_player)
+
+    def open_pomodoro(self):
+        """Abre la ventana de Pomodoro"""
+        if self.pomodoro_window is None or not self.pomodoro_window.winfo_exists():
+            self.pomodoro_window = PomodoroWindow(
+                self,
+                self.pomodoro_manager,
+                self.store,
+                self.music_player
+            )
+        else:
+            # Si ya existe, traerla al frente
+            self.pomodoro_window.lift()
+            self.pomodoro_window.focus()
 
     # ---------- Filtro de color dinámico ----------
     def _refresh_color_filter(self):
@@ -401,11 +450,14 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         )
         # Botón extra para abrir editor completo sigue en acciones
 
-        if task.priority:
+        # Mostrar nivel de prioridad
+        priority_key = task.priority if isinstance(task.priority, str) else ("high" if task.priority else "medium")
+        if priority_key in PRIORITY_LEVELS:
+            priority_info = PRIORITY_LEVELS[priority_key]
             tk.Label(
                 header,
-                text="⭐ PRIORIDAD",
-                bg=GRADIENTS["Warning"][0],
+                text=f"{priority_info['emoji']} {priority_info['label'].upper()}",
+                bg=priority_info['color'],
                 fg="white",
                 font=("Segoe UI", 8, "bold"),
                 padx=6,
@@ -464,6 +516,9 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             "Warning"
         )
         self._create_small_button(
+            actions, "🍅", lambda t=tid: self._add_task_to_pomodoro(t), "Warning"
+        )
+        self._create_small_button(
             actions, "📝", lambda t=tid: self.open_note_by_id(t), "Primary"
         )
         self._create_small_button(
@@ -512,6 +567,28 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             return
         self.delete_task_by_index(idx, tid)
         update_statistics(self)
+
+    def _add_task_to_pomodoro(self, tid: str):
+        """Agrega una tarea a la cola de Pomodoro"""
+        try:
+            # Agregar tarea a la cola
+            self.pomodoro_manager.add_task_to_queue(tid)
+
+            # Abrir ventana de Pomodoro si no está abierta
+            if self.pomodoro_window is None or not self.pomodoro_window.winfo_exists():
+                self.open_pomodoro()
+            else:
+                # Si ya está abierta, solo refrescar la lista
+                self.pomodoro_window._refresh_task_list()
+                self.pomodoro_window.lift()
+
+            # Obtener tarea para mostrar nombre
+            task = self.store.get_by_id(tid)
+            if task:
+                print(f"[INFO] Tarea agregada al Pomodoro: {task.title}")
+        except Exception as e:
+            print(f"[ERROR] No se pudo agregar al Pomodoro: {e}")
+            messagebox.showerror("Error", f"No se pudo agregar al Pomodoro:\n{e}")
 
     def _get_task_border_color(self, task, now: date) -> str:
         if task.done:

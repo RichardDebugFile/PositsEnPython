@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import messagebox
 from datetime import timedelta
 
-from ..config import MODERN_COLORS, GRADIENTS, COLOR_LABELS
+from ..config import MODERN_COLORS, GRADIENTS, COLOR_LABELS, PRIORITY_LEVELS
 from ..utils.dates import fmt_date, today_date, valid_date, parse_date
 from ..ui.components import PillButton, ColorPalette, create_centered_row
 
@@ -76,11 +76,35 @@ class ModernAddTaskDialog(tk.Toplevel):
                 "small"
             ).pack(side="left", padx=4, pady=2)
 
+        # Selector de prioridad con 4 niveles
+        tk.Label(
+            content,
+            text="⭐ Nivel de Prioridad",
+            bg=GRADIENTS["Card"][0],
+            fg=MODERN_COLORS["Text"],
+            font=("Segoe UI", 10, "bold")
+        ).pack(anchor="w", pady=(0, 4))
+
         priority_row = create_centered_row(content)
-        self.var_priority = tk.BooleanVar(value=bool(self.preset.get("priority", False)))
-        tk.Checkbutton(priority_row, text="⭐ Marcar como Prioridad", variable=self.var_priority,
-                       bg=priority_row.cget("bg"), fg=MODERN_COLORS["Text"],
-                       font=("Segoe UI", 10, "bold")).pack(pady=6)
+        # Convertir priority antiguo (bool) a nuevo formato (string)
+        preset_priority = self.preset.get("priority", "medium")
+        if isinstance(preset_priority, bool):
+            preset_priority = "high" if preset_priority else "medium"
+
+        self.var_priority = tk.StringVar(value=preset_priority)
+
+        for priority_key, priority_data in PRIORITY_LEVELS.items():
+            rb = tk.Radiobutton(
+                priority_row,
+                text=f"{priority_data['emoji']} {priority_data['label']} (+{priority_data['xp']} XP)",
+                variable=self.var_priority,
+                value=priority_key,
+                bg=priority_row.cget("bg"),
+                fg=MODERN_COLORS["Text"],
+                font=("Segoe UI", 9),
+                selectcolor=MODERN_COLORS["Light"]
+            )
+            rb.pack(side="left", padx=8, pady=6)
 
         # Paleta de color preseleccionada si viene del preset
         self.preset_color = self.preset.get("color", "Sunshine")

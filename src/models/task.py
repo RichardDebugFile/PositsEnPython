@@ -20,7 +20,7 @@ class Task:
         desc: Descripción detallada
         start: Fecha de inicio
         due: Fecha de vencimiento
-        priority: Si es tarea prioritaria
+        priority: Nivel de prioridad ("urgent", "high", "medium", "low")
         done: Si está completada
         color: Color del posit (clave de VIBRANT_COLORS)
         pinned: Si está anclada (always on top)
@@ -37,7 +37,7 @@ class Task:
         desc: str = "",
         start: Optional[date] = None,
         due: Optional[date] = None,
-        priority: bool = False,
+        priority: str = "medium",
         done: bool = False,
         color: str = "Sunshine",
         pinned: bool = False,
@@ -51,7 +51,11 @@ class Task:
         self.desc = desc
         self.start = start or today_date()
         self.due = due or (today_date() + timedelta(days=3))
-        self.priority = priority
+        # Convertir priority booleano antiguo a string (migración)
+        if isinstance(priority, bool):
+            self.priority = "high" if priority else "medium"
+        else:
+            self.priority = priority if priority in ["urgent", "high", "medium", "low"] else "medium"
         self.done = done
         self.color = color
         self.pinned = pinned
@@ -83,13 +87,16 @@ class Task:
         """Crea una tarea desde un diccionario"""
         from ..utils.dates import parse_date
 
+        # Migración de priority de bool a string
+        priority_value = data.get("priority", "medium")
+
         return cls(
             id=data.get("id"),
             title=data.get("title", ""),
             desc=data.get("desc", ""),
             start=parse_date(data.get("start", fmt_date(today_date()))),
             due=parse_date(data.get("due", fmt_date(today_date() + timedelta(days=3)))),
-            priority=data.get("priority", False),
+            priority=priority_value,  # Ahora acepta bool o string
             done=data.get("done", False),
             color=data.get("color", "Sunshine"),
             pinned=data.get("pinned", False),

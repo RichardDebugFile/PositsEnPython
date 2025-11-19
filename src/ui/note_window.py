@@ -72,6 +72,7 @@ class ModernNoteWindow(tk.Toplevel):
         PillButton(controls, "Pin", self.toggle_pin, "Primary", "small", "📌").pack(side="left", padx=4)
         PillButton(controls, "Paleta", self.open_palette, "Secondary", "small", "🎨").pack(side="left", padx=4)
         PillButton(controls, "Adjuntar", self._attach_file, "Secondary", "small", "📎").pack(side="left", padx=4)
+        PillButton(controls, "Pomodoro", self._add_to_pomodoro, "Warning", "small", "🍅").pack(side="left", padx=4)
         self.btn_save = PillButton(controls, "Guardar", self._save_changes, "Success", "small", "💾")
         self.btn_save.pack(side="left", padx=4)
         PillButton(controls, "Cancelar", self._revert_changes, "Warning", "small", "↩️").pack(side="left", padx=4)
@@ -387,6 +388,29 @@ class ModernNoteWindow(tk.Toplevel):
                 self._mark_dirty()
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo adjuntar el archivo:\n{e}")
+
+    def _add_to_pomodoro(self):
+        """Agrega esta tarea a la cola de Pomodoro"""
+        try:
+            # Verificar si existe el pomodoro_manager
+            if not hasattr(self.app, 'pomodoro_manager'):
+                messagebox.showwarning("Pomodoro", "El sistema Pomodoro no está disponible")
+                return
+
+            # Agregar tarea a la cola
+            self.app.pomodoro_manager.add_task_to_queue(self.tid)
+
+            # Abrir ventana de Pomodoro si no está abierta
+            if not hasattr(self.app, 'pomodoro_window') or self.app.pomodoro_window is None or not self.app.pomodoro_window.winfo_exists():
+                self.app.open_pomodoro()
+            else:
+                # Si ya está abierta, solo refrescar la lista
+                self.app.pomodoro_window._refresh_task_list()
+                self.app.pomodoro_window.lift()
+
+            messagebox.showinfo("Pomodoro", f"Tarea agregada al Pomodoro:\n{self.title_var.get()}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo agregar al Pomodoro:\n{e}")
 
     def _refresh_attachments(self):
         """Actualiza la lista de archivos adjuntos"""

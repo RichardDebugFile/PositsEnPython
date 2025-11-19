@@ -78,10 +78,31 @@ class GamificationPanel(tk.Frame):
         self.refresh()
 
     def _bind_mousewheel(self):
-        """Bind mousewheel para scroll en el panel"""
+        """Bind mousewheel para scroll en el panel solo cuando el mouse está encima"""
         def _on_mousewheel(e):
             self.canvas.yview_scroll(int(-1*(e.delta/120)), "units")
-        self.canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+        def _on_mousewheel_linux_up(e):
+            self.canvas.yview_scroll(-3, "units")
+
+        def _on_mousewheel_linux_down(e):
+            self.canvas.yview_scroll(3, "units")
+
+        def _on_enter(e):
+            """Cuando el mouse entra al canvas, activar scroll"""
+            self.canvas.bind_all("<MouseWheel>", _on_mousewheel)
+            self.canvas.bind_all("<Button-4>", _on_mousewheel_linux_up)
+            self.canvas.bind_all("<Button-5>", _on_mousewheel_linux_down)
+
+        def _on_leave(e):
+            """Cuando el mouse sale del canvas, desactivar scroll"""
+            self.canvas.unbind_all("<MouseWheel>")
+            self.canvas.unbind_all("<Button-4>")
+            self.canvas.unbind_all("<Button-5>")
+
+        # Vincular eventos de entrada/salida
+        self.canvas.bind("<Enter>", _on_enter)
+        self.canvas.bind("<Leave>", _on_leave)
 
     def _create_level_section(self, parent):
         """Crea la sección de nivel y XP"""

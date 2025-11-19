@@ -92,7 +92,7 @@ class TaskStore:
 
         self._after(delay_ms, _flush)
 
-    def add(self, title: str, desc: str, due: date, priority: bool, color: Optional[str] = None) -> Task:
+    def add(self, title: str, desc: str, due: date, priority: str, color: Optional[str] = None) -> Task:
         """Crea y agrega una nueva tarea"""
         task = Task(
             title=title,
@@ -126,15 +126,29 @@ class TaskStore:
 
             # Si se completó (no se descompletó), notificar gamificación
             if task.done:
-                result = self.gamification.on_task_completed(is_priority=task.priority)
+                result = self.gamification.on_task_completed(priority_level=task.priority)
                 logger.info(f"Tarea completada: {task.title} (+{result['xp_gained']} XP)")
                 return result
             return None
 
     def toggle_priority(self, index: int):
-        """Marca/desmarca una tarea como prioritaria"""
+        """Cicla entre los niveles de prioridad: low -> medium -> high -> urgent -> low"""
         if 0 <= index < len(self.tasks):
-            self.tasks[index].priority = not self.tasks[index].priority
+            task = self.tasks[index]
+            # Convertir si es booleano antiguo
+            if isinstance(task.priority, bool):
+                task.priority = "high" if task.priority else "medium"
+
+            # Ciclar entre niveles
+            priority_cycle = ["low", "medium", "high", "urgent"]
+            try:
+                current_index = priority_cycle.index(task.priority)
+                next_index = (current_index + 1) % len(priority_cycle)
+                task.priority = priority_cycle[next_index]
+            except ValueError:
+                # Si no está en la lista, poner medium por defecto
+                task.priority = "medium"
+
             self.save()
 
     def index_by_id(self, task_id: str) -> int:

@@ -5,8 +5,13 @@ Servicio de Speech-to-Text (dictado por voz)
 """
 
 import json
+from pathlib import Path
 from tkinter import messagebox
 from ..utils.logger import logger
+
+# Ruta al modelo de Vosk
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+VOSK_MODEL_PATH = str(PROJECT_ROOT / "models" / "vosk-model-small-es-0.42")
 
 
 def clean_user_freeform(text: str) -> str:
@@ -58,14 +63,20 @@ def stt_from_audio_bytes(raw_bytes: bytes, sample_rate: int = 16000) -> tuple[st
 
     # 2) Intentar Vosk
     try:
-        text = r.recognize_vosk(audio)
+        # Verificar si existe el modelo
+        if not Path(VOSK_MODEL_PATH).exists():
+            error_msg = f"Modelo de Vosk no encontrado en: {VOSK_MODEL_PATH}\nDescarga el modelo desde https://alphacephei.com/vosk/models"
+            return None, error_msg
+
+        text = r.recognize_vosk(audio, language=VOSK_MODEL_PATH)
         if text is not None:
             cleaned = clean_user_freeform(text).strip()
             if cleaned:
                 logger.debug(f"STT (Vosk): {cleaned}")
                 return cleaned, None
     except Exception as e:
-        error_msg = f"Instala Vosk y su modelo en ./models (ej: vosk-model-small-es-0.42). Error: {e}"
+        error_msg = f"Error al transcribir con Vosk. Verifica que el modelo esté instalado en ./models/vosk-model-small-es-0.42\nError: {e}"
+        logger.error(error_msg)
         return None, error_msg
 
     return None, "No fue posible transcribir con los motores locales (Faster-Whisper/Vosk)."

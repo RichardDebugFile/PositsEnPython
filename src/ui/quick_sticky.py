@@ -62,9 +62,10 @@ class QuickStickyWindow(tk.Toplevel):
             anchor="w"
         ).pack(fill="x", padx=pad, pady=(0, 4))
 
-        # Botón cerrar
+        # Botones
         btn_frame = tk.Frame(self, bg=color)
         btn_frame.pack(fill="x", padx=pad, pady=(0, pad))
+        PillButton(btn_frame, "Pomodoro", self._add_to_pomodoro, "Warning", "small", "🍅").pack(side="left")
         PillButton(btn_frame, "Cerrar", self.close, "Danger", "small", "✖").pack(side="right")
 
         # Bindings para mover la ventana
@@ -147,6 +148,37 @@ class QuickStickyWindow(tk.Toplevel):
             print(f"[DEBUG] Posición guardada para {task_id}: ({x}, {y})")
         except Exception as e:
             print(f"[ERROR] No se pudo guardar posición: {e}")
+
+    def _add_to_pomodoro(self):
+        """Agrega esta tarea/misión a la cola de Pomodoro"""
+        from tkinter import messagebox
+        try:
+            # Verificar si existe el pomodoro_manager
+            if not hasattr(self.master, 'pomodoro_manager'):
+                messagebox.showwarning("Pomodoro", "El sistema Pomodoro no está disponible")
+                return
+
+            # Obtener el ID de la tarea
+            task_id = getattr(self.task, 'id', None)
+            if not task_id:
+                messagebox.showerror("Error", "No se pudo obtener el ID de la tarea")
+                return
+
+            # Agregar tarea a la cola
+            self.master.pomodoro_manager.add_task_to_queue(task_id)
+
+            # Abrir ventana de Pomodoro si no está abierta
+            if not hasattr(self.master, 'pomodoro_window') or self.master.pomodoro_window is None or not self.master.pomodoro_window.winfo_exists():
+                self.master.open_pomodoro()
+            else:
+                # Si ya está abierta, solo refrescar la lista
+                self.master.pomodoro_window._refresh_task_list()
+                self.master.pomodoro_window.lift()
+
+            task_title = getattr(self.task, 'title', 'Tarea')
+            messagebox.showinfo("Pomodoro", f"Tarea agregada al Pomodoro:\n{task_title}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo agregar al Pomodoro:\n{e}")
 
     def close(self):
         """Cierra la ventana"""

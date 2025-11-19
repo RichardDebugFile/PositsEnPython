@@ -12,7 +12,7 @@ from ..config import MODERN_COLORS, GRADIENTS
 from ..utils.dates import fmt_date, today_date, parse_date, valid_date
 from ..utils.logger import logger
 from ..services import extract_task_with_ollama
-from ..services.stt import PushToTalkRecorder
+from ..services.stt import PushToTalkRecorder, stt_from_audio_bytes, clean_user_freeform
 from ..ui.components import PillButton, create_centered_row
 
 class OllamaCaptureDialog(tk.Toplevel):
@@ -126,21 +126,16 @@ class OllamaCaptureDialog(tk.Toplevel):
         self._rec = None
         if not raw:
             return
-        # Note: stt_from_audio_bytes should be imported from services.stt
-        # For now, commenting out this line - it needs to be defined/imported
-        # text, err = stt_from_audio_bytes(raw, sample_rate=16000)
-        messagebox.showinfo(
-            "Dictado",
-            "Función de speech-to-text no disponible"
-        )
-        return
-        # if err:
-        #     messagebox.showwarning("Dictado", err)
-        #     return
-        # if text:
-        #     prev = self.txt_input.get("1.0", "end").strip()
-        #     self.txt_input.delete("1.0", "end")
-        #     self.txt_input.insert("1.0", (prev + "\n" if prev else "") + text)
+
+        # Transcribir el audio a texto
+        text, err = stt_from_audio_bytes(raw, sample_rate=16000)
+        if err:
+            messagebox.showwarning("Dictado", err)
+            return
+        if text:
+            prev = self.txt_input.get("1.0", "end").strip()
+            self.txt_input.delete("1.0", "end")
+            self.txt_input.insert("1.0", (prev + "\n" if prev else "") + text)
 
 
     def _pick_images(self):
@@ -167,8 +162,7 @@ class OllamaCaptureDialog(tk.Toplevel):
             )
             return
 
-        # Note: clean_user_freeform should be imported or defined
-        user_text = raw  # Using raw text directly for now
+        user_text = clean_user_freeform(raw)
         self._set_status("Consultando a Ollama…")
         try:
             logger.debug("IA.input = %s", user_text)

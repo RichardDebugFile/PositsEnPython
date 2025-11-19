@@ -1,7 +1,6 @@
 .gitignore
 mainV1.py
 mainV2.py
-visor_gemma.py
 data
 __pycache__
 otracosa.py
@@ -14,3 +13,5 @@ docs
 .claude
 nul
 reports
+model
+models

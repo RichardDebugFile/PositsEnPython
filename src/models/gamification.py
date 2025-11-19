@@ -136,15 +136,29 @@ class GamificationManager:
         self.save()
         return False
 
-    def on_task_completed(self, is_priority: bool = False):
+    def on_task_completed(self, priority_level: str = "medium"):
         """
         Llamar cuando se completa una tarea.
         Otorga XP y actualiza progreso de misiones.
+
+        Args:
+            priority_level: Nivel de prioridad ("urgent", "high", "medium", "low") o bool (legacy)
         """
         self.check_and_reset_daily()
 
-        # XP base
-        xp_gained = GAMIFICATION_CONFIG["points_per_priority_task"] if is_priority else GAMIFICATION_CONFIG["points_per_task"]
+        # Importar PRIORITY_LEVELS para obtener XP
+        from ..config import PRIORITY_LEVELS
+
+        # Manejar valores legacy (booleanos)
+        if isinstance(priority_level, bool):
+            priority_level = "high" if priority_level else "medium"
+
+        # Validar y obtener nivel de prioridad
+        if priority_level not in PRIORITY_LEVELS:
+            priority_level = "medium"
+
+        # XP base según nivel de prioridad
+        xp_gained = PRIORITY_LEVELS[priority_level]["xp"]
 
         # Bonus por racha
         if self.data["current_streak"] > 0:
@@ -156,7 +170,7 @@ class GamificationManager:
         self.data["total_tasks_completed"] += 1
         self.data["tasks_completed_today"] = self.data.get("tasks_completed_today", 0) + 1
 
-        # Iniciar racha si es la primera tarea completada
+        # Iniciar racha si es la primera tarea completada hoy
         if self.data.get("current_streak", 0) == 0 and self.data["tasks_completed_today"] == 1:
             self.data["current_streak"] = 1
             if self.data["current_streak"] > self.data.get("longest_streak", 0):
@@ -169,7 +183,8 @@ class GamificationManager:
             if self.data["daily_missions"][0]["progress"] >= self.data["daily_missions"][0]["goal"]:
                 self._complete_mission(0)
 
-        # Misión 2: Completar tarea prioritaria
+        # Misión 2: Completar tarea prioritaria (high o urgent)
+        is_priority = priority_level in ["high", "urgent"]
         if is_priority and not self.data["daily_missions"][1]["completed"]:
             self.data["daily_missions"][1]["progress"] += 1
             if self.data["daily_missions"][1]["progress"] >= self.data["daily_missions"][1]["goal"]:

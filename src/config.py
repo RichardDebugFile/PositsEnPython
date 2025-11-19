@@ -92,15 +92,55 @@ SPANISH_TO_KEY = {
 # ---------------------------- Formato de fechas ----------------------------
 ISO_FMT = "%Y-%m-%d"
 
+# ---------------------------- Prioridades ----------------------------
+PRIORITY_LEVELS = {
+    "urgent": {
+        "emoji": "🔴",
+        "label": "Urgente",
+        "xp": 50,
+        "color": "#FF4444"
+    },
+    "high": {
+        "emoji": "🟠",
+        "label": "Alta",
+        "xp": 35,
+        "color": "#FF8C00"
+    },
+    "medium": {
+        "emoji": "🟡",
+        "label": "Media",
+        "xp": 25,
+        "color": "#FFD700"
+    },
+    "low": {
+        "emoji": "🟢",
+        "label": "Baja",
+        "xp": 15,
+        "color": "#4CAF50"
+    }
+}
+
 # ---------------------------- Gamificación ----------------------------
 GAMIFICATION_CONFIG = {
     "points_per_task": 10,
-    "points_per_priority_task": 25,
+    "points_per_priority_task": 25,  # Valor base, se usa PRIORITY_LEVELS para el cálculo real
     "points_per_daily_mission": 50,
     "daily_missions_required": 3,
     "base_points_per_level": 150,  # Nivel 1→2 requiere 150 puntos
     "level_multiplier": 1.3,  # Cada nivel requiere 30% más que el anterior
     "streak_bonus_multiplier": 1.5,  # Bono por racha de días consecutivos
+}
+
+# ---------------------------- Pomodoro ----------------------------
+POMODORO_CONFIG = {
+    "work_duration": 25,  # minutos
+    "break_duration": 5,  # minutos
+    "long_break_duration": 15,  # minutos
+    "sessions_per_cycle": 4,
+    "auto_start_break": False,
+    "auto_start_work": False,
+    "notifications_enabled": True,
+    "sound_enabled": True,
 }
 
 # ---------------------------- Notificaciones ----------------------------
