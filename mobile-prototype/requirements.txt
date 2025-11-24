@@ -1,0 +1,16 @@
+# Kivy Framework (versión compatible con Python 3.13)
+kivy[base]>=2.3.0
+kivymd>=1.2.0
+
+# Audio para reproductor de música
+pygame>=2.5.0
+
+# Dependencias core
+pillow>=10.0.0
+requests>=2.32.0
+
+# YouTube downloader (opcional para móvil)
+# yt-dlp>=2024.11.12
+
+# Utilidades
+python-dateutil>=2.9.0

@@ -7,11 +7,14 @@ Los archivos se copian a data/music/ para independencia de ubicación
 """
 
 import json
+import logging
 import os
 import shutil
 from pathlib import Path
 from typing import Optional, List, Callable
 import pygame
+
+logger = logging.getLogger(__name__)
 
 
 class MusicPlayer:
@@ -46,6 +49,9 @@ class MusicPlayer:
         # Cargar configuración guardada
         self.load_config()
 
+        # Escanear carpeta de música para agregar archivos nuevos
+        self.scan_music_folder()
+
     def load_config(self):
         """Carga la configuración de música guardada"""
         if not os.path.exists(self.config_file):
@@ -55,9 +61,29 @@ class MusicPlayer:
             with open(self.config_file, "r", encoding="utf-8") as f:
                 config = json.load(f)
 
-            self.playlist = config.get("playlist", [])
+            # Cargar playlist y filtrar archivos que ya no existen
+            loaded_playlist = config.get("playlist", [])
+            self.playlist = []
+            removed_count = 0
+
+            for file_path in loaded_playlist:
+                if os.path.exists(file_path):
+                    self.playlist.append(file_path)
+                else:
+                    logger.warning(f"Archivo en playlist no encontrado, removiendo: {file_path}")
+                    removed_count += 1
+
+            if removed_count > 0:
+                logger.info(f"Se removieron {removed_count} archivo(s) inexistente(s) de la playlist")
+
             self.current_index = config.get("current_index", 0)
             self.main_track = config.get("main_track", None)
+
+            # Validar que main_track exista
+            if self.main_track and not os.path.exists(self.main_track):
+                logger.warning(f"Main track no encontrado, reseteando: {self.main_track}")
+                self.main_track = None
+
             self.mode = config.get("mode", "main")
             self.volume = config.get("volume", 0.5)
             was_playing = config.get("was_playing", False)
@@ -469,6 +495,46 @@ class MusicPlayer:
         self.current_index = 0
         self.save_config()
         print("[INFO] Playlist limpiada")
+
+    def scan_music_folder(self):
+        """
+        Escanea la carpeta de música y agrega todos los archivos de audio
+        que no estén ya en la playlist
+
+        Returns:
+            Número de archivos nuevos agregados
+        """
+        added_count = 0
+
+        try:
+            # Extensiones de audio soportadas
+            audio_extensions = {'.mp3', '.wav', '.ogg', '.flac', '.m4a'}
+
+            # Obtener lista de archivos actuales en playlist (solo nombres)
+            current_filenames = {Path(f).name for f in self.playlist}
+
+            # Escanear carpeta de música
+            music_path = Path(self.music_dir)
+            if not music_path.exists():
+                return 0
+
+            # Buscar archivos de audio
+            for file_path in music_path.iterdir():
+                if file_path.is_file() and file_path.suffix.lower() in audio_extensions:
+                    # Solo agregar si no está ya en la playlist
+                    if file_path.name not in current_filenames:
+                        self.playlist.append(str(file_path))
+                        added_count += 1
+                        logger.info(f"Agregado a playlist: {file_path.name}")
+
+            if added_count > 0:
+                self.save_config()
+                logger.info(f"Se agregaron {added_count} archivo(s) nuevos a la playlist")
+
+        except Exception as e:
+            logger.error(f"Error al escanear carpeta de música: {e}")
+
+        return added_count
 
     def check_and_play_next(self):
         """

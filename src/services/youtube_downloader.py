@@ -6,6 +6,7 @@ Integrado con el reproductor de música de Posits Virtuales
 """
 
 import os
+import re
 import threading
 import hashlib
 import shutil
@@ -27,6 +28,7 @@ class YouTubeDownloader:
         self.cancel_event = threading.Event()
         self.is_downloading = False
         self.current_thread: Optional[threading.Thread] = None
+        self.downloaded_file = None  # Guardar el archivo descargado
 
         # Crear carpeta de salida si no existe
         os.makedirs(self.output_dir, exist_ok=True)
@@ -35,6 +37,30 @@ class YouTubeDownloader:
         self.on_progress: Optional[Callable] = None
         self.on_complete: Optional[Callable] = None
         self.on_error: Optional[Callable] = None
+
+    def _sanitize_filename(self, filename: str) -> str:
+        """
+        Sanitiza el nombre del archivo eliminando caracteres problemáticos
+        """
+        # Eliminar o reemplazar caracteres no permitidos en Windows
+        # Caracteres prohibidos: < > : " / \ | ? *
+        sanitized = re.sub(r'[<>:"/\\|?*]', '_', filename)
+
+        # Reemplazar caracteres especiales problemáticos
+        sanitized = sanitized.replace('—', '-')  # Em dash
+        sanitized = sanitized.replace('–', '-')  # En dash
+        sanitized = sanitized.replace('"', "'")  # Comillas dobles
+        sanitized = sanitized.replace('"', "'")  # Comillas tipográficas
+
+        # Eliminar espacios múltiples
+        sanitized = re.sub(r'\s+', ' ', sanitized)
+
+        # Limitar longitud (Windows tiene límite de 255 caracteres)
+        if len(sanitized) > 200:
+            name, ext = os.path.splitext(sanitized)
+            sanitized = name[:200] + ext
+
+        return sanitized.strip()
 
     def _get_ffmpeg_path(self) -> Optional[str]:
         """Intenta encontrar FFmpeg en el sistema"""
@@ -140,11 +166,22 @@ class YouTubeDownloader:
         """Thread de descarga"""
         self.is_downloading = True
         self.cancel_event.clear()
+        self.downloaded_file = None
 
         try:
-            # Configurar opciones de yt-dlp
+            # Primero obtener info del video
+            with YoutubeDL({"quiet": True}) as ydl:
+                info = ydl.extract_info(url, download=False)
+                original_title = info['title']
+                sanitized_title = self._sanitize_filename(original_title)
+                logger.info(f"Título original: {original_title}")
+                logger.info(f"Título sanitizado: {sanitized_title}")
+
+            # Configurar opciones de yt-dlp con nombre sanitizado
+            output_template = os.path.join(self.output_dir, f"{sanitized_title}.%(ext)s")
+
             ydl_opts = {
-                "outtmpl": os.path.join(self.output_dir, "%(title)s.%(ext)s"),
+                "outtmpl": output_template,
                 "format": "bestaudio/best",
                 "postprocessors": [{
                     "key": "FFmpegExtractAudio",
@@ -158,30 +195,82 @@ class YouTubeDownloader:
                 "keepvideo": False,
                 "retries": 10,
                 "fragment_retries": 10,
+                "restrictfilenames": False,  # No restringir caracteres (ya lo hacemos nosotros)
             }
 
             # Verificar FFmpeg
             ffmpeg_path = self._get_ffmpeg_path()
             if ffmpeg_path:
                 logger.info(f"FFmpeg encontrado en: {ffmpeg_path}")
+                ydl_opts["ffmpeg_location"] = ffmpeg_path
             else:
                 logger.warning("FFmpeg no encontrado, la conversión puede fallar")
 
             # Descargar
             logger.info(f"Iniciando descarga: {url}")
             with YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(url, download=True)
-                filename = f"{info['title']}.mp3"
-                filepath = os.path.join(self.output_dir, filename)
+                ydl.extract_info(url, download=True)
+
+            # Buscar el archivo MP3 descargado
+            expected_filepath = os.path.join(self.output_dir, f"{sanitized_title}.mp3")
+            actual_filepath = None
+
+            # Si el archivo esperado no existe, buscar en la carpeta por el más reciente
+            if not os.path.exists(expected_filepath):
+                logger.warning(f"Archivo esperado no encontrado: {expected_filepath}")
+                logger.info("Buscando archivo MP3 más reciente en la carpeta...")
+
+                # Listar archivos MP3 en la carpeta
+                mp3_files = [f for f in Path(self.output_dir).glob("*.mp3")]
+                if mp3_files:
+                    # Obtener el más reciente
+                    actual_filepath = str(max(mp3_files, key=lambda p: p.stat().st_mtime))
+                    logger.info(f"Archivo encontrado: {actual_filepath}")
+                else:
+                    raise FileNotFoundError(f"No se encontró ningún archivo MP3 en {self.output_dir}")
+            else:
+                actual_filepath = expected_filepath
 
             # Verificar que el archivo existe
-            if not os.path.exists(filepath):
-                raise FileNotFoundError(f"Archivo no encontrado: {filepath}")
+            if not os.path.exists(actual_filepath):
+                raise FileNotFoundError(f"Archivo no encontrado: {actual_filepath}")
+
+            # Si el nombre del archivo tiene caracteres problemáticos, renombrarlo
+            actual_filename = os.path.basename(actual_filepath)
+            sanitized_filename = self._sanitize_filename(actual_filename)
+
+            if actual_filename != sanitized_filename:
+                logger.info(f"Renombrando archivo con caracteres problemáticos...")
+                logger.info(f"  De: {actual_filename}")
+                logger.info(f"  A:  {sanitized_filename}")
+
+                new_filepath = os.path.join(self.output_dir, sanitized_filename)
+
+                # Si ya existe un archivo con el nombre sanitizado, agregar número
+                if os.path.exists(new_filepath):
+                    base, ext = os.path.splitext(sanitized_filename)
+                    counter = 1
+                    while os.path.exists(os.path.join(self.output_dir, f"{base}_{counter}{ext}")):
+                        counter += 1
+                    new_filepath = os.path.join(self.output_dir, f"{base}_{counter}{ext}")
+                    logger.info(f"  Archivo ya existe, usando: {os.path.basename(new_filepath)}")
+
+                try:
+                    os.rename(actual_filepath, new_filepath)
+                    actual_filepath = new_filepath
+                    logger.info("Archivo renombrado exitosamente")
+                except Exception as e:
+                    logger.error(f"Error al renombrar archivo: {e}")
+                    # Continuar con el nombre original si falla el renombrado
+
+            # Guardar la ruta del archivo descargado (renombrado si fue necesario)
+            self.downloaded_file = actual_filepath
 
             # Calcular hash y tamaño
-            size = os.path.getsize(filepath)
-            sha = self._sha256sum(filepath)
+            size = os.path.getsize(actual_filepath)
+            sha = self._sha256sum(actual_filepath)
 
+            filename = os.path.basename(actual_filepath)
             logger.info(f"Descarga completada: {filename}")
             logger.info(f"Tamaño: {self._format_bytes(size)}")
             logger.info(f"SHA-256: {sha}")
@@ -190,10 +279,10 @@ class YouTubeDownloader:
             if self.on_complete:
                 self.on_complete({
                     "filename": filename,
-                    "filepath": filepath,
+                    "filepath": actual_filepath,
                     "size": size,
                     "sha256": sha,
-                    "title": info.get("title"),
+                    "title": os.path.splitext(filename)[0],  # Título sin extensión
                     "duration": info.get("duration"),
                     "uploader": info.get("uploader")
                 })
