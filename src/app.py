@@ -30,6 +30,8 @@ from .ui import (
     QuickStickyWindow,
     GamificationPanel,
     PomodoroWindow,
+    CalendarPanel,
+    MiniCalendarWidget,
 )
 from .dialogs import ModernAddTaskDialog, OllamaCaptureDialog
 from .services import NotificationService
@@ -72,29 +74,35 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.pomodoro_manager = PomodoroManager()
         self.pomodoro_window = None
 
-        self.geometry("1150x750")  # Más ancho para panel de gamificación expandido
-        self.minsize(1150, 700)  # Tamaño mínimo aumentado para ver todo
+        self.geometry("1450x850")  # Tamaño aumentado para mejor visualización (tamaño estándar)
+        self.minsize(1280, 750)  # Tamaño mínimo de la app
         self.resizable(True, True)
 
         self._create_header()
         self._create_toolbar()
 
-        # Frame principal con 2 columnas: tareas + gamificación
+        # Frame principal con 2 columnas: tabs (tareas/calendario) + gamificación
         main_container = tk.Frame(self, bg=self.BG)
         main_container.pack(fill="both", expand=True, padx=8, pady=8)
 
-        # Columna izquierda: área de tareas (65%)
-        self.tasks_column = tk.Frame(main_container, bg=self.BG)
-        self.tasks_column.pack(side="left", fill="both", expand=True, padx=(0, 8))
+        # Columna izquierda: Notebook con tabs (65%)
+        self.left_column = tk.Frame(main_container, bg=self.BG)
+        self.left_column.pack(side="left", fill="both", expand=True, padx=(0, 8))
 
         # Columna derecha: panel de gamificación (35% - más espacio)
         self.gamification_column = tk.Frame(main_container, bg=self.BG, width=350)
         self.gamification_column.pack(side="right", fill="y", padx=(8, 8))
         self.gamification_column.pack_propagate(False)
 
-        self._create_content_area()  # Crea canvas en tasks_column
-        self._create_gamification_panel()  # NUEVO: Panel de gamificación
+        # Crear sistema de tabs
+        self._create_tabs_notebook()
+        self._create_content_area()  # Crea canvas en tasks_column (dentro del tab de tareas)
+        self._create_calendar_panel()  # Crea panel de calendario en el segundo tab
+        self._create_gamification_panel()
         self._create_footer()
+
+        # Mini calendario flotante (inicialmente oculto)
+        self.mini_calendar = None
 
         self.note_windows: dict[str, ModernNoteWindow] = {}
         self.quick_windows: dict[str, QuickStickyWindow] = {}
@@ -106,6 +114,133 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.render_tasks()
         self.after(200, self.reopen_notes)
         self.after(400, self.open_daily_mission_posits)  # Abrir posits de misiones diarias
+
+    def _create_tabs_notebook(self):
+        """Crea el sistema de tabs personalizado (más visible que ttk.Notebook)"""
+        # Frame para los tabs (header)
+        self.tabs_header = tk.Frame(self.left_column, bg=self.BG, height=50)
+        self.tabs_header.pack(fill="x", pady=(0, 4))
+        self.tabs_header.pack_propagate(False)
+
+        # Variable para rastrear tab activo
+        self.current_tab = -1  # -1 para permitir que el primer _switch_tab(0) se ejecute correctamente
+
+        # Crear botones de tabs personalizados
+        self.tab_buttons = []
+
+        # Tab 1: Tareas
+        btn_tasks = tk.Frame(self.tabs_header, bg="#CCCCCC", relief="raised", bd=2, cursor="hand2")
+        btn_tasks.pack(side="left", fill="both", expand=True, padx=(0, 2))
+
+        lbl_tasks = tk.Label(
+            btn_tasks,
+            text="📋 Tareas",
+            bg="#CCCCCC",
+            fg="#000000",
+            font=("Segoe UI", 12, "bold"),
+            cursor="hand2"
+        )
+        lbl_tasks.pack(expand=True, pady=12)
+        lbl_tasks.bind("<Button-1>", lambda e: self._switch_tab(0))
+        btn_tasks.bind("<Button-1>", lambda e: self._switch_tab(0))
+
+        self.tab_buttons.append((btn_tasks, lbl_tasks))
+
+        # Tab 2: Calendario
+        btn_calendar = tk.Frame(self.tabs_header, bg="#CCCCCC", relief="raised", bd=2, cursor="hand2")
+        btn_calendar.pack(side="left", fill="both", expand=True, padx=(2, 0))
+
+        lbl_calendar = tk.Label(
+            btn_calendar,
+            text="📅 Calendario",
+            bg="#CCCCCC",
+            fg="#000000",
+            font=("Segoe UI", 12, "bold"),
+            cursor="hand2"
+        )
+        lbl_calendar.pack(expand=True, pady=12)
+        lbl_calendar.bind("<Button-1>", lambda e: self._switch_tab(1))
+        btn_calendar.bind("<Button-1>", lambda e: self._switch_tab(1))
+
+        self.tab_buttons.append((btn_calendar, lbl_calendar))
+
+        # Container para el contenido de los tabs
+        self.tabs_container = tk.Frame(self.left_column, bg=self.BG)
+        self.tabs_container.pack(fill="both", expand=True)
+
+        # Tab 1: Tareas
+        self.tasks_column = tk.Frame(self.tabs_container, bg=self.BG)
+
+        # Tab 2: Calendario
+        self.calendar_column = tk.Frame(self.tabs_container, bg=self.BG)
+
+        # Activar el primer tab
+        self._switch_tab(0)
+
+    def _switch_tab(self, tab_index):
+        """Cambia entre tabs"""
+        if tab_index == self.current_tab:
+            return
+
+        # Ocultar tab actual
+        if self.current_tab == 0:
+            self.tasks_column.pack_forget()
+        else:
+            self.calendar_column.pack_forget()
+
+        # Actualizar estilos de botones
+        for i, (btn_frame, btn_label) in enumerate(self.tab_buttons):
+            if i == tab_index:
+                # Tab seleccionado: Azul brillante
+                btn_frame.config(bg="#2196F3", relief="solid", bd=3)
+                btn_label.config(bg="#2196F3", fg="#FFFFFF")
+            else:
+                # Tab no seleccionado: Gris
+                btn_frame.config(bg="#CCCCCC", relief="raised", bd=2)
+                btn_label.config(bg="#CCCCCC", fg="#000000")
+
+        # Mostrar nuevo tab
+        if tab_index == 0:
+            self.tasks_column.pack(fill="both", expand=True)
+        else:
+            self.calendar_column.pack(fill="both", expand=True)
+            # Refrescar calendario al cambiar a él
+            if hasattr(self, 'calendar_panel'):
+                self.calendar_panel.refresh()
+
+        self.current_tab = tab_index
+
+    def _create_calendar_panel(self):
+        """Crea el panel de calendario interactivo"""
+        self.calendar_panel = CalendarPanel(
+            self.calendar_column,
+            self.store,
+            self.store.gamification,
+            app=self
+        )
+        self.calendar_panel.pack(fill="both", expand=True)
+
+
+    def toggle_mini_calendar(self):
+        """Muestra/oculta el mini calendario flotante"""
+        if self.mini_calendar is None:
+            self.mini_calendar = MiniCalendarWidget(
+                self,
+                self.store,
+                on_date_click=self._on_mini_calendar_date_click
+            )
+        else:
+            self.mini_calendar.toggle()
+
+    def _on_mini_calendar_date_click(self, clicked_date):
+        """Callback cuando se hace click en una fecha del mini calendario"""
+        # Cambiar al tab de calendario
+        self._switch_tab(1)
+        # Seleccionar la fecha y navegar al mes
+        if hasattr(self, 'calendar_panel'):
+            self.calendar_panel.selected_date = clicked_date
+            self.calendar_panel.current_date = clicked_date
+            self.calendar_panel.refresh()
 
     def _create_header(self):
         header = tk.Frame(self, bg=GRADIENTS["Primary"][0], relief="flat", bd=0)
@@ -170,6 +305,11 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             center, "Pomodoro", self.open_pomodoro, "Warning", "normal", "🍅"
         ).pack(side="left", padx=6)
 
+        # --- Botón Mini Calendario ---
+        PillButton(
+            center, "Mini Cal", self.toggle_mini_calendar, "Primary", "normal", "📅"
+        ).pack(side="left", padx=6)
+
         # Ordenamiento
         sort_frame = tk.Frame(center, bg=center.cget("bg"))
         sort_frame.pack(side="left", padx=8)
@@ -220,15 +360,37 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.scrollbar = ttk.Scrollbar(
             content_frame, orient="vertical", command=self.canvas.yview
         )
-        self.task_frame = tk.Frame(self.canvas, bg=self.BG)
-        self.task_frame.bind(
+
+        # Frame de scroll (va dentro del canvas)
+        scroll_frame = tk.Frame(self.canvas, bg=self.BG)
+
+        # Frame centrador con grid para mejor control
+        center_wrapper = tk.Frame(scroll_frame, bg=self.BG)
+        center_wrapper.pack(fill="both", expand=True)
+
+        # Configurar grid: columnas laterales con peso 1, columna central sin peso
+        center_wrapper.grid_columnconfigure(0, weight=1)  # Espacio izquierdo
+        center_wrapper.grid_columnconfigure(1, weight=0)  # Columna de tareas (ancho fijo)
+        center_wrapper.grid_columnconfigure(2, weight=1)  # Espacio derecho
+
+        # Frame de tareas (contenido real, en columna central)
+        self.task_frame = tk.Frame(center_wrapper, bg=self.BG)
+        self.task_frame.grid(row=0, column=1, sticky="n", padx=20)  # sticky="n" para arriba, padx para márgenes
+
+        scroll_frame.bind(
             "<Configure>",
             lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         )
-        self.canvas.create_window((0, 0), window=self.task_frame, anchor="nw")
+
+        # Crear window del scroll_frame en el canvas
+        self.task_window = self.canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
+
+        # Bind para ajustar el ancho del scroll_frame al ancho del canvas
+        self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.task_window, width=e.width))
+
         self._bind_mousewheel()
 
     def _bind_mousewheel(self):
@@ -286,6 +448,14 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     # ---------- Diálogo agregar ----------
     def open_add_dialog(self):
         ModernAddTaskDialog(self, self._on_add)
+
+    def open_add_dialog_with_date(self, due: date):
+        """Abre el diálogo de agregar tarea con una fecha preseleccionada"""
+        ModernAddTaskDialog(
+            self,
+            self._on_add,
+            preset={"due": due}
+        )
 
     def open_add_dialog_prefilled(
         self, title: str, desc: str, due: date, priority: str, color: str
@@ -396,13 +566,27 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         if hasattr(self, 'gamification_panel'):
             self.gamification_panel.refresh()
 
+        # Actualizar calendario si está visible
+        if hasattr(self, 'calendar_panel') and hasattr(self, 'current_tab'):
+            if self.current_tab == 1:  # Tab de calendario activo
+                self.calendar_panel.refresh()
+
+        # Actualizar mini calendario si está visible
+        if hasattr(self, 'mini_calendar') and self.mini_calendar and self.mini_calendar.winfo_exists():
+            try:
+                if self.mini_calendar.winfo_viewable():
+                    self.mini_calendar.refresh()
+            except Exception:
+                pass
+
     def _render_modern_task_card(self, task: dict, now: date):
         tid = task.id
         border_color = self._get_task_border_color(task, now)
 
-        # Container para centrar con padding
-        outer = tk.Frame(self.task_frame, bg=border_color)
-        outer.pack(fill="x", pady=4, padx=40)  # Padding horizontal para centrar
+        # Container con borde de color (ancho de 750px para consistencia)
+        outer = tk.Frame(self.task_frame, bg=border_color, width=750)
+        outer.pack(pady=4)
+        outer.pack_propagate(True)  # Permitir que se ajuste a la altura del contenido
 
         card = tk.Frame(outer, bg=GRADIENTS["Card"][0], relief="flat", bd=0)
         card.pack(fill="both", expand=True, padx=2, pady=2)
@@ -552,6 +736,9 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.store.toggle_done(idx)
         self.render_tasks()
         update_statistics(self)
+        # Refrescar panel de gamificación para actualizar rachas y misiones
+        if hasattr(self, 'gamification_panel'):
+            self.gamification_panel.refresh()
 
     def _toggle_priority_with_update_by_id(self, tid: str):
         idx = self.store.index_by_id(tid)
@@ -705,20 +892,36 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
             idx = 0
             for mission_key, mission_data in missions_data.items():
-                # Crear un objeto Task temporal para cada misión
                 task_id = f"mission_{mission_key}"
-                fake_task = Task(
-                    id=task_id,
-                    title=mission_data.get("title", "Misión Diaria"),
-                    desc=mission_data.get("desc", ""),
-                    priority=mission_data.get("priority") == "Alta",
-                    color=mission_data.get("color", "Ocean"),
-                    start=fmt_date(today_date()),
-                    due=fmt_date(today_date())
-                )
 
-                # Crear QuickStickyWindow para la misión (skip_centering=True para usar posiciones guardadas)
-                qwin = QuickStickyWindow(self, fake_task, skip_centering=True)
+                # Buscar si ya existe esta tarea en el store
+                existing_task = self.store.get_by_id(task_id)
+
+                if not existing_task:
+                    # Crear tarea real en el TaskStore si no existe
+                    # Convertir "Alta" a nivel de prioridad
+                    priority_str = "high" if mission_data.get("priority") == "Alta" else "medium"
+
+                    task = Task(
+                        id=task_id,
+                        title=mission_data.get("title", "Misión Diaria"),
+                        desc=mission_data.get("desc", ""),
+                        priority=priority_str,
+                        color=mission_data.get("color", "Ocean"),
+                        start=today_date(),
+                        due=today_date()
+                    )
+
+                    # Agregar al store
+                    self.store.tasks.append(task)
+                    self.store.save()
+                    print(f"[INFO] Misión diaria creada como tarea real: {task.title}")
+                    existing_task = task
+                else:
+                    print(f"[INFO] Misión diaria ya existe: {existing_task.title}")
+
+                # Crear QuickStickyWindow para la misión usando la tarea real
+                qwin = QuickStickyWindow(self, existing_task, skip_centering=True)
 
                 # Usar posición guardada si existe, sino usar posición por defecto
                 if task_id in saved_positions:

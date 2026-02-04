@@ -36,7 +36,7 @@ except ImportError as e:
 
 # 3. Verificar que el modelo de Vosk exista
 print("\n3. Verificando modelo de Vosk...")
-model_path = Path("models/vosk-model-small-es-0.42")
+model_path = Path("model/vosk-model-small-es-0.42/vosk-model-small-es-0.42")
 if model_path.exists():
     print(f"   [OK] Modelo encontrado en: {model_path.absolute()}")
     # Verificar archivos importantes del modelo

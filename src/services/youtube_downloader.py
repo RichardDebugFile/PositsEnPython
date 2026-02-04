@@ -196,6 +196,18 @@ class YouTubeDownloader:
                 "retries": 10,
                 "fragment_retries": 10,
                 "restrictfilenames": False,  # No restringir caracteres (ya lo hacemos nosotros)
+                # Configuración para evitar bloqueos de YouTube
+                "extractor_args": {
+                    "youtube": {
+                        "player_client": ["android", "web"],  # Usar cliente Android primero, luego web
+                        "skip": ["hls", "dash"]  # Evitar formatos problemáticos
+                    }
+                },
+                # Headers adicionales para evitar detección
+                "http_headers": {
+                    "User-Agent": "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
+                    "Accept-Language": "en-US,en;q=0.9",
+                }
             }
 
             # Verificar FFmpeg

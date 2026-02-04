@@ -32,7 +32,7 @@ def test_task_creation():
             desc="Test description",
             start=date.today(),
             due=date.today() + timedelta(days=3),
-            priority=True,
+            priority="high",
             done=False,
             color="Sunshine"
         )
@@ -68,7 +68,7 @@ def test_task_serialization():
             desc="Test serialization",
             start=date.today(),
             due=date.today() + timedelta(days=5),
-            priority=False,
+            priority="low",
             done=True,
             color="Ocean"
         )
@@ -115,7 +115,7 @@ def test_task_store_operations():
             desc="Test store operations",
             start=date.today(),
             due=date.today() + timedelta(days=2),
-            priority=False,
+            priority="medium",
             done=False,
             color="Nature"
         )
@@ -127,15 +127,14 @@ def test_task_store_operations():
         assert store.tasks[idx].id == "test-003"
 
         # Test toggle_done
-        result = store.toggle_done("test-003", None)
-        assert result == True
+        result = store.toggle_done(idx)
         assert store.tasks[idx].done == True
 
         # Test sort
         store.sort_tasks("date")
 
         # Test filters
-        all_tasks = store.get_filtered_tasks(None, None, show_done=True)
+        all_tasks = store.get_filtered_tasks(None, None)
         assert len(all_tasks) > 0
 
         # Cleanup
@@ -160,7 +159,7 @@ def test_task_attribute_access_patterns():
             desc="Test attribute access",
             start=date.today(),
             due=date.today() + timedelta(days=1),
-            priority=True,
+            priority="high",
             done=False,
             color="Sunset"
         )
@@ -205,7 +204,7 @@ def test_ui_component_compatibility():
             desc="Test UI compatibility",
             start=date.today(),
             due=date.today() + timedelta(days=7),
-            priority=False,
+            priority="medium",
             done=False,
             color="Lavender",
             geometry="560x520+200+200",
@@ -261,7 +260,7 @@ def test_date_handling():
             desc="",
             start=now,
             due=now + timedelta(days=3),
-            priority=False,
+            priority="low",
             done=False,
             color="Ocean"
         )
@@ -331,7 +330,7 @@ def test_app_initialization():
                 desc=f"Description {i}",
                 start=date.today(),
                 due=date.today() + timedelta(days=i+1),
-                priority=(i % 2 == 0),
+                priority="high" if (i % 2 == 0) else "low",
                 done=False,
                 color=list(VIBRANT_COLORS.keys())[i]
             )
@@ -339,7 +338,7 @@ def test_app_initialization():
 
         # Test filtering and sorting
         store.sort_tasks("date")
-        filtered = store.get_filtered_tasks(None, None, show_done=False)
+        filtered = store.get_filtered_tasks(None, None)
         assert len(filtered) == 3
 
         # Cleanup

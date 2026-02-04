@@ -241,3 +241,88 @@ class TaskStore:
             "pending": pending,
             "overdue": overdue,
         }
+
+    # ------------------------ Consultas por Fecha (Calendario) ------------------------
+
+    def get_tasks_in_date_range(self, start_date: date, end_date: date) -> list[Task]:
+        """
+        Retorna tareas cuya fecha de vencimiento está en el rango especificado.
+
+        Args:
+            start_date: Fecha inicial del rango (inclusive)
+            end_date: Fecha final del rango (inclusive)
+
+        Returns:
+            Lista de tareas en el rango
+        """
+        return [t for t in self.tasks if start_date <= t.due <= end_date]
+
+    def get_tasks_for_date(self, target_date: date) -> list[Task]:
+        """
+        Retorna tareas que vencen en una fecha específica.
+
+        Args:
+            target_date: Fecha a buscar
+
+        Returns:
+            Lista de tareas que vencen ese día
+        """
+        return [t for t in self.tasks if t.due == target_date]
+
+    def get_tasks_starting_on(self, target_date: date) -> list[Task]:
+        """
+        Retorna tareas que inician en una fecha específica.
+
+        Args:
+            target_date: Fecha a buscar
+
+        Returns:
+            Lista de tareas que inician ese día
+        """
+        return [t for t in self.tasks if t.start == target_date]
+
+    def get_tasks_by_month(self, year: int, month: int) -> dict[str, list[Task]]:
+        """
+        Retorna tareas agrupadas por día para un mes específico.
+
+        Args:
+            year: Año
+            month: Mes (1-12)
+
+        Returns:
+            Dict {fecha_str: [lista de tareas]}
+        """
+        from calendar import monthrange
+
+        _, last_day = monthrange(year, month)
+        start_date = date(year, month, 1)
+        end_date = date(year, month, last_day)
+
+        result = {}
+        for task in self.tasks:
+            if start_date <= task.due <= end_date:
+                date_str = fmt_date(task.due)
+                if date_str not in result:
+                    result[date_str] = []
+                result[date_str].append(task)
+
+        return result
+
+    def update_task_date(self, task_id: str, new_due: date) -> bool:
+        """
+        Actualiza la fecha de vencimiento de una tarea.
+
+        Args:
+            task_id: ID de la tarea
+            new_due: Nueva fecha de vencimiento
+
+        Returns:
+            True si se actualizó, False si no se encontró
+        """
+        task = self.get_by_id(task_id)
+        if task:
+            task.due = new_due
+            self.save()
+            logger.info(f"Fecha de tarea actualizada: {task.title} -> {fmt_date(new_due)}")
+            return True
+        return False

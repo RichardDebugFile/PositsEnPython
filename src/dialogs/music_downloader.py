@@ -27,6 +27,7 @@ class MusicDownloaderDialog(tk.Toplevel):
         self.grab_set()
         self.configure(bg=GRADIENTS["Card"][0])
 
+        self.app = master  # Referencia a la app principal
         self.music_player = music_player
         self.downloader = YouTubeDownloader()
 
@@ -246,6 +247,58 @@ class MusicDownloaderDialog(tk.Toplevel):
             )
             return
 
+        # Verificar si el archivo ya existe antes de descargar
+        try:
+            from yt_dlp import YoutubeDL
+            import os
+            from pathlib import Path
+
+            # Obtener información del video
+            self.status_var.set("Obteniendo información del video...")
+            self.update_idletasks()
+
+            with YoutubeDL({"quiet": True}) as ydl:
+                info = ydl.extract_info(url, download=False)
+                original_title = info['title']
+                sanitized_title = self.downloader._sanitize_filename(original_title)
+
+            # Verificar si ya existe un archivo con nombre similar
+            music_dir = Path(self.downloader.output_dir)
+            existing_files = list(music_dir.glob(f"{sanitized_title}*.mp3"))
+
+            if existing_files:
+                # Archivo duplicado encontrado
+                existing_file = existing_files[0]
+                response = messagebox.askyesnocancel(
+                    "Archivo Duplicado",
+                    f"Ya existe una canción con nombre similar:\n\n"
+                    f"📁 {existing_file.name}\n\n"
+                    f"¿Qué deseas hacer?\n\n"
+                    f"• SÍ: Reemplazar con la nueva descarga (mejor calidad)\n"
+                    f"• NO: Cancelar descarga\n"
+                    f"• CANCELAR: Descargar con nombre diferente"
+                )
+
+                if response is None:  # Cancelar = descargar con nombre diferente
+                    # Continuar con la descarga normal (se agregará número automáticamente)
+                    pass
+                elif response:  # SÍ = reemplazar
+                    # Eliminar archivo existente
+                    try:
+                        os.remove(existing_file)
+                        logger.info(f"Archivo existente eliminado: {existing_file.name}")
+                    except Exception as e:
+                        logger.error(f"Error al eliminar archivo: {e}")
+                        messagebox.showerror("Error", f"No se pudo eliminar el archivo existente:\n{e}")
+                        return
+                else:  # NO = cancelar descarga
+                    self.status_var.set("Descarga cancelada por el usuario")
+                    return
+
+        except Exception as e:
+            logger.error(f"Error verificando archivo duplicado: {e}")
+            # Continuar con la descarga de todas formas
+
         # Deshabilitar botones
         self.btn_download.configure(state="disabled")
         self.btn_cancel.configure(state="normal")
@@ -316,6 +369,12 @@ class MusicDownloaderDialog(tk.Toplevel):
             try:
                 self.music_player.scan_music_folder()
                 logger.info("Playlist actualizada con nueva canción")
+
+                # Refrescar la UI del panel de música si existe
+                if hasattr(self.app, 'gamification_panel') and hasattr(self.app.gamification_panel, 'music_panel'):
+                    self.app.gamification_panel.music_panel._update_playlist_display()
+                    self.app.gamification_panel.music_panel._update_display()
+                    logger.info("UI del panel de música actualizada")
             except Exception as e:
                 logger.error(f"Error actualizando playlist: {e}")
 

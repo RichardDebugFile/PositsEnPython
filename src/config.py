@@ -160,3 +160,26 @@ ALLOWED_ATTACHMENT_EXTENSIONS = {
 }
 
 MAX_ATTACHMENT_SIZE_MB = 50
+
+# ---------------------------- Calendario ----------------------------
+CALENDAR_CONFIG = {
+    # Colores para el heatmap de productividad (estilo GitHub)
+    "heatmap_colors": [
+        "#ebedf0",  # Nivel 0: Sin actividad (gris claro)
+        "#9be9a8",  # Nivel 1: Baja productividad (verde claro)
+        "#40c463",  # Nivel 2: Media productividad (verde)
+        "#30a14e",  # Nivel 3: Alta productividad (verde oscuro)
+        "#216e39",  # Nivel 4: Muy alta productividad (verde intenso)
+    ],
+    # Configuración del mini widget
+    "show_mini_calendar": True,
+    "mini_calendar_position": "bottom-right",  # bottom-right, bottom-left, top-right, top-left
+    # Nombres de meses en español
+    "month_names": [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ],
+    # Nombres de días en español
+    "day_names": ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+    "day_names_short": ["L", "M", "X", "J", "V", "S", "D"],
+}

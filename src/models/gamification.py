@@ -122,6 +122,9 @@ class GamificationManager:
         self.data["xp"] += amount
         old_level = self.data["level"]
 
+        # Registrar en historial diario para el heatmap del calendario
+        self._record_daily_xp(amount)
+
         # Calcular nivel actual basado en XP total acumulado
         new_level = old_level
         while self.data["xp"] >= self._calculate_xp_for_level(new_level + 1):
@@ -135,6 +138,94 @@ class GamificationManager:
 
         self.save()
         return False
+
+    def _record_daily_xp(self, amount: int):
+        """
+        Registra XP ganado en el historial diario.
+        Se usa para el heatmap del calendario.
+        """
+        today_str = fmt_date(today_date())
+        history = self.data.get("history", [])
+
+        # Buscar entrada de hoy
+        today_entry = None
+        for entry in history:
+            if entry.get("date") == today_str:
+                today_entry = entry
+                break
+
+        if today_entry:
+            today_entry["xp_gained"] = today_entry.get("xp_gained", 0) + amount
+            today_entry["tasks_completed"] = today_entry.get("tasks_completed", 0)
+        else:
+            history.append({
+                "date": today_str,
+                "xp_gained": amount,
+                "tasks_completed": 0,
+                "missions_completed": 0
+            })
+
+        # Mantener solo los últimos 365 días para no crecer indefinidamente
+        if len(history) > 365:
+            history = history[-365:]
+
+        self.data["history"] = history
+
+    def _update_daily_tasks_completed(self):
+        """Incrementa el contador de tareas completadas en el historial de hoy"""
+        today_str = fmt_date(today_date())
+        history = self.data.get("history", [])
+
+        for entry in history:
+            if entry.get("date") == today_str:
+                entry["tasks_completed"] = entry.get("tasks_completed", 0) + 1
+                break
+
+        self.data["history"] = history
+
+    def get_xp_for_date_range(self, start_date: date, end_date: date) -> dict:
+        """
+        Obtiene el XP ganado por día en un rango de fechas.
+        Se usa para el heatmap del calendario.
+
+        Args:
+            start_date: Fecha inicial del rango
+            end_date: Fecha final del rango
+
+        Returns:
+            Dict {date_str: xp_amount}
+        """
+        result = {}
+        history = self.data.get("history", [])
+
+        for entry in history:
+            try:
+                entry_date = parse_date(entry.get("date", "1970-01-01"))
+                if start_date <= entry_date <= end_date:
+                    result[entry["date"]] = entry.get("xp_gained", 0)
+            except Exception:
+                continue
+
+        return result
+
+    def get_history_entry(self, target_date: date) -> Optional[dict]:
+        """
+        Obtiene la entrada del historial para una fecha específica.
+
+        Args:
+            target_date: Fecha a buscar
+
+        Returns:
+            Dict con datos del día o None si no existe
+        """
+        target_str = fmt_date(target_date)
+        history = self.data.get("history", [])
+
+        for entry in history:
+            if entry.get("date") == target_str:
+                return entry
+
+        return None
 
     def on_task_completed(self, priority_level: str = "medium"):
         """
@@ -169,6 +260,9 @@ class GamificationManager:
         # Actualizar contadores
         self.data["total_tasks_completed"] += 1
         self.data["tasks_completed_today"] = self.data.get("tasks_completed_today", 0) + 1
+
+        # Actualizar historial diario (tasks_completed)
+        self._update_daily_tasks_completed()
 
         # Iniciar racha si es la primera tarea completada hoy
         if self.data.get("current_streak", 0) == 0 and self.data["tasks_completed_today"] == 1:
