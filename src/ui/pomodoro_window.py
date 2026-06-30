@@ -23,6 +23,12 @@ from .components import PillButton
 class PomodoroWindow(tk.Toplevel):
     """Ventana flotante de gestión de sesiones Pomodoro"""
 
+    # Estilos por fase para el anillo (color por fase trabajo/descanso)
+    _PHASE_STYLES = {
+        "work":  {"bg": "#FF8C42", "track": "#E67635", "arc": "#FFFFFF", "title": "🍅 TRABAJO"},
+        "break": {"bg": "#2EC4B6", "track": "#27A99D", "arc": "#FFFFFF", "title": "☕ DESCANSO"},
+    }
+
     def __init__(self, parent, pomodoro_manager, task_store, music_player):
         super().__init__(parent)
         self.pomodoro_manager = pomodoro_manager
@@ -31,12 +37,13 @@ class PomodoroWindow(tk.Toplevel):
 
         # Estado del timer
         self.time_remaining = pomodoro_manager.work_duration * 60  # segundos
+        self.session_total_seconds = self.time_remaining  # total de la fase (para el anillo)
         self.timer_running = False
         self.timer_id = None
 
         # Configurar ventana
         self.title("🍅 Modo Pomodoro")
-        self.geometry("450x600")
+        self.geometry("460x680")
         self.configure(bg=GRADIENTS["Card"][0])
         self.resizable(False, False)
 
@@ -55,50 +62,41 @@ class PomodoroWindow(tk.Toplevel):
     def _create_ui(self):
         """Crea la interfaz de la ventana Pomodoro"""
 
-        # === HEADER con timer ===
-        header = tk.Frame(self, bg=GRADIENTS["Warning"][0], height=120)
-        header.pack(fill="x", padx=0, pady=0)
-        header.pack_propagate(False)
+        # === HEADER con anillo de tiempo (color por fase) ===
+        work_bg = self._PHASE_STYLES["work"]["bg"]
+        self.header = tk.Frame(self, bg=work_bg, height=300)
+        self.header.pack(fill="x")
+        self.header.pack_propagate(False)
 
-        tk.Label(
-            header,
-            text="🍅 MODO POMODORO",
-            bg=GRADIENTS["Warning"][0],
+        self.phase_title = tk.Label(
+            self.header,
+            text=self._PHASE_STYLES["work"]["title"],
+            bg=work_bg,
             fg="white",
-            font=("Segoe UI", 14, "bold")
-        ).pack(pady=(15, 5))
-
-        # Timer
-        self.timer_label = tk.Label(
-            header,
-            text="25:00",
-            bg=GRADIENTS["Warning"][0],
-            fg="white",
-            font=("Segoe UI", 32, "bold")
+            font=("Segoe UI", 13, "bold")
         )
-        self.timer_label.pack()
+        self.phase_title.pack(pady=(16, 6))
 
-        # Barra de progreso
-        progress_frame = tk.Frame(header, bg=GRADIENTS["Warning"][0])
-        progress_frame.pack(fill="x", padx=20, pady=(5, 10))
-
-        self.progress_bar = ttk.Progressbar(
-            progress_frame,
-            mode="determinate",
-            length=380,
-            maximum=100
+        # Anillo de progreso dibujado en un Canvas
+        self.ring_size = 190
+        self.ring_canvas = tk.Canvas(
+            self.header,
+            width=self.ring_size,
+            height=self.ring_size,
+            bg=work_bg,
+            highlightthickness=0
         )
-        self.progress_bar.pack(fill="x")
+        self.ring_canvas.pack()
 
         # Sesión actual
         self.session_label = tk.Label(
-            header,
+            self.header,
             text="Sesión 0/4",
-            bg=GRADIENTS["Warning"][0],
+            bg=work_bg,
             fg="white",
-            font=("Segoe UI", 10)
+            font=("Segoe UI", 10, "bold")
         )
-        self.session_label.pack()
+        self.session_label.pack(pady=(6, 10))
 
         # === ZONA DE TAREAS ===
         tasks_frame = tk.Frame(self, bg=GRADIENTS["Card"][0])
@@ -395,6 +393,7 @@ class PomodoroWindow(tk.Toplevel):
     def _start_timer(self):
         """Inicia el timer"""
         self.timer_running = True
+        self.session_total_seconds = self.pomodoro_manager.work_duration * 60
         self.play_pause_btn.set_text("⏸ Pausar")
 
         # Iniciar sesión en el manager
@@ -441,11 +440,13 @@ class PomodoroWindow(tk.Toplevel):
 
             # Reiniciar timer
             self.time_remaining = self.pomodoro_manager.work_duration * 60
+            self.session_total_seconds = self.pomodoro_manager.work_duration * 60
             self._update_display()
 
     def _add_time(self):
         """Agrega 5 minutos al timer actual"""
         self.time_remaining += 300  # 5 minutos = 300 segundos
+        self.session_total_seconds += 300
         self._update_display()
 
     def _countdown(self):
@@ -487,6 +488,7 @@ class PomodoroWindow(tk.Toplevel):
 
             # Configurar para descanso
             self.time_remaining = break_duration * 60
+            self.session_total_seconds = break_duration * 60
             self.play_pause_btn.set_text("☕ Iniciar Descanso")
             self._update_display()
 
@@ -503,6 +505,7 @@ class PomodoroWindow(tk.Toplevel):
 
             # Reiniciar para trabajo
             self.time_remaining = self.pomodoro_manager.work_duration * 60
+            self.session_total_seconds = self.pomodoro_manager.work_duration * 60
             self.play_pause_btn.set_text("▶ Iniciar")
             self._update_display()
 
@@ -868,6 +871,7 @@ class PomodoroWindow(tk.Toplevel):
             # Actualizar timer si no está corriendo
             if not self.timer_running:
                 self.time_remaining = self.pomodoro_manager.work_duration * 60
+                self.session_total_seconds = self.pomodoro_manager.work_duration * 60
                 self._update_display()
 
             messagebox.showinfo("Guardado", "Configuración guardada correctamente")
@@ -889,19 +893,57 @@ class PomodoroWindow(tk.Toplevel):
             size="normal"
         ).pack(side="left", padx=5)
 
-    def _update_display(self):
-        """Actualiza la visualización del timer y progreso"""
-        # Actualizar timer
+    def _phase_style(self):
+        """Devuelve el estilo (colores/título) de la fase actual."""
+        is_break = getattr(self.pomodoro_manager, "is_break", False)
+        return self._PHASE_STYLES["break" if is_break else "work"]
+
+    def _draw_ring(self, fraction, style):
+        """Dibuja el anillo de progreso con el tiempo restante en el centro."""
+        c = self.ring_canvas
+        c.delete("all")
+        size = self.ring_size
+        pad = 16
+        width = 16
+        x0, y0, x1, y1 = pad, pad, size - pad, size - pad
+
+        # Pista de fondo (círculo completo)
+        c.create_oval(x0, y0, x1, y1, outline=style["track"], width=width)
+
+        # Arco de progreso desde arriba en sentido horario
+        frac = max(0.0, min(1.0, fraction))
+        if frac > 0:
+            c.create_arc(
+                x0, y0, x1, y1,
+                start=90, extent=-359.999 * frac,
+                style="arc", outline=style["arc"], width=width
+            )
+
+        # Tiempo restante en el centro
         minutes = self.time_remaining // 60
         seconds = self.time_remaining % 60
-        self.timer_label.configure(text=f"{minutes:02d}:{seconds:02d}")
+        c.create_text(
+            size // 2, size // 2,
+            text=f"{minutes:02d}:{seconds:02d}",
+            fill="white", font=("Segoe UI", 32, "bold")
+        )
 
-        # Actualizar progreso
-        total_time = self.pomodoro_manager.work_duration * 60
-        progress = ((total_time - self.time_remaining) / total_time) * 100
-        self.progress_bar["value"] = progress
+    def _update_display(self):
+        """Actualiza el anillo, los colores de fase y el contador de sesión."""
+        style = self._phase_style()
 
-        # Actualizar sesión
+        # Aplicar color de fase al header y etiquetas
+        self.header.configure(bg=style["bg"])
+        self.phase_title.configure(bg=style["bg"], text=style["title"])
+        self.ring_canvas.configure(bg=style["bg"])
+        self.session_label.configure(bg=style["bg"])
+
+        # Progreso de la fase actual
+        total = self.session_total_seconds or 1
+        fraction = (total - self.time_remaining) / total
+        self._draw_ring(fraction, style)
+
+        # Sesión
         self.session_label.configure(
             text=f"Sesión {self.pomodoro_manager.current_session}/{self.pomodoro_manager.sessions_per_cycle}"
         )

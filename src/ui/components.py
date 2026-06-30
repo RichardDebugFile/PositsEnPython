@@ -9,6 +9,60 @@ import tkinter.font as tkfont
 from ..config import MODERN_COLORS, GRADIENTS, VIBRANT_COLORS, COLOR_LABELS
 
 
+# ---------------------------- Tooltip ----------------------------
+class Tooltip:
+    """Tooltip simple que aparece al pasar el cursor sobre un widget."""
+
+    def __init__(self, widget, text, delay=450):
+        self.widget = widget
+        self.text = text
+        self.delay = delay
+        self._after_id = None
+        self._tip = None
+        widget.bind("<Enter>", self._schedule, add="+")
+        widget.bind("<Leave>", self._hide, add="+")
+        widget.bind("<ButtonPress>", self._hide, add="+")
+
+    def _schedule(self, _e=None):
+        self._cancel()
+        self._after_id = self.widget.after(self.delay, self._show)
+
+    def _cancel(self):
+        if self._after_id:
+            try:
+                self.widget.after_cancel(self._after_id)
+            except Exception:
+                pass
+            self._after_id = None
+
+    def _show(self):
+        if self._tip or not self.text:
+            return
+        try:
+            x = self.widget.winfo_rootx() + 12
+            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 6
+        except Exception:
+            return
+        self._tip = tk.Toplevel(self.widget)
+        self._tip.wm_overrideredirect(True)
+        self._tip.wm_geometry(f"+{x}+{y}")
+        self._tip.attributes("-topmost", True)
+        tk.Label(
+            self._tip, text=self.text,
+            bg=MODERN_COLORS["Dark"], fg="white",
+            font=("Segoe UI", 8), padx=8, pady=4, justify="left"
+        ).pack()
+
+    def _hide(self, _e=None):
+        self._cancel()
+        if self._tip:
+            try:
+                self._tip.destroy()
+            except Exception:
+                pass
+            self._tip = None
+
+
 # ---------------------------- Botón Pill (Canvas) ----------------------------
 class PillButton(tk.Canvas):
     """
