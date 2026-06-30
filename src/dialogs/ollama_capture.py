@@ -4,6 +4,7 @@
 Diálogo para captura con IA (Ollama)
 """
 
+import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from datetime import timedelta
@@ -12,8 +13,10 @@ from ..config import MODERN_COLORS, GRADIENTS
 from ..utils.dates import fmt_date, today_date, parse_date, valid_date
 from ..utils.logger import logger
 from ..services import extract_task_with_ollama
+from ..services.ollama import ensure_ollama_running
 from ..services.stt import PushToTalkRecorder, stt_from_audio_bytes, clean_user_freeform
 from ..ui.components import PillButton, create_centered_row
+from ..ui.loading import LoadingOverlay
 
 class OllamaCaptureDialog(tk.Toplevel):
     """
@@ -28,6 +31,7 @@ class OllamaCaptureDialog(tk.Toplevel):
         self.grab_set()
         self.configure(bg=GRADIENTS["Card"][0])
         self.on_create_task = on_create_task
+        self._analyzing = False  # evita disparar dos análisis a la vez
 
 
         header = tk.Frame(self, bg=GRADIENTS["Primary"][0])
@@ -127,8 +131,19 @@ class OllamaCaptureDialog(tk.Toplevel):
         if not raw:
             return
 
-        # Transcribir el audio a texto
-        text, err = stt_from_audio_bytes(raw, sample_rate=16000)
+        # Transcribir el audio a texto en un hilo, con barra de carga.
+        overlay = LoadingOverlay(self, "Transcribiendo audio…")
+        overlay.show()
+
+        def worker():
+            text, err = stt_from_audio_bytes(raw, sample_rate=16000)
+            self.after(0, lambda: self._on_stt_done(overlay, text, err))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_stt_done(self, overlay, text, err):
+        """Recibe el resultado de la transcripción en el hilo principal."""
+        overlay.hide()
         if err:
             messagebox.showwarning("Dictado", err)
             return
@@ -154,6 +169,9 @@ class OllamaCaptureDialog(tk.Toplevel):
         )
 
     def _analyze_and_create(self):
+        if self._analyzing:
+            return
+
         raw = self.txt_input.get("1.0", "end").strip()
         if not raw and not self.image_paths:
             messagebox.showinfo(
@@ -163,39 +181,63 @@ class OllamaCaptureDialog(tk.Toplevel):
             return
 
         user_text = clean_user_freeform(raw)
-        self._set_status("Consultando a Ollama…")
-        try:
-            logger.debug("IA.input = %s", user_text)
-            logger.debug("IA.images = %s", len(self.image_paths))
-            extracted = extract_task_with_ollama(
-                user_text,
-                image_paths=self.image_paths
-            )
-        except (ConnectionError, TimeoutError, ValueError) as e:
-            self._set_status("Error")
-            logger.error("Error en Ollama: %s", e)
-            messagebox.showerror(
-                "IA (Ollama)",
-                f"Ocurrió un error al conectar con Ollama.\n{e}"
-            )
-            return
-        finally:
-            self._set_status("")
+        image_paths = list(self.image_paths)
+        logger.debug("IA.input = %s", user_text)
+        logger.debug("IA.images = %s", len(image_paths))
 
-        # --- VALIDAR SALIDA ---
+        # Overlay de carga + trabajo en hilo: arranca/verifica Ollama y consulta
+        # la IA sin congelar la interfaz.
+        self._analyzing = True
+        overlay = LoadingOverlay(self, "Conectando con Ollama…")
+        overlay.show()
+
+        def worker():
+            error = None
+            extracted = None
+            try:
+                def status(msg):
+                    self.after(0, lambda m=msg: overlay.update_message(m))
+
+                if not ensure_ollama_running(on_status=status):
+                    error = (
+                        "No se pudo conectar ni iniciar Ollama.\n"
+                        "Verifica que esté instalado (https://ollama.com)."
+                    )
+                else:
+                    self.after(0, lambda: overlay.update_message("Analizando con IA…"))
+                    extracted = extract_task_with_ollama(user_text, image_paths=image_paths)
+            except Exception as e:  # noqa: BLE001 - se reporta en el hilo principal
+                logger.error("Error en Ollama: %s", e)
+                error = str(e)
+
+            self.after(0, lambda: self._on_analyze_done(overlay, extracted, error))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_analyze_done(self, overlay, extracted, error):
+        """Procesa el resultado del análisis en el hilo principal."""
+        overlay.hide()
+        self._analyzing = False
+
+        if error:
+            messagebox.showerror("IA (Ollama)", error)
+            return
+
         if not extracted:
-            messagebox.showwarning("IA (Ollama)",
-                                "No pude entender la orden. Revisa el log.")
+            messagebox.showwarning(
+                "IA (Ollama)",
+                "No pude entender la orden (o Ollama no respondió). Revisa el log."
+            )
             return
 
         # ---------------------- crear tarea ----------------------
         title = extracted["title"]
-        desc  = extracted["desc"]
+        desc = extracted["desc"]
         due_s = extracted["due"] or fmt_date(today_date() + timedelta(days=3))
         if not valid_date(due_s):           # fallback seguro
             due_s = fmt_date(today_date() + timedelta(days=3))
         due = parse_date(due_s)
-        prio  = bool(extracted["priority"])
+        prio = bool(extracted["priority"])
         color = extracted["color"] or "Sunshine"
 
         logger.debug("IA.output = %s", extracted)

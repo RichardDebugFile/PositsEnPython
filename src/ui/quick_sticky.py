@@ -66,6 +66,17 @@ class QuickStickyWindow(tk.Toplevel):
         btn_frame = tk.Frame(self, bg=color)
         btn_frame.pack(fill="x", padx=pad, pady=(0, pad))
         PillButton(btn_frame, "Pomodoro", self._add_to_pomodoro, "Warning", "small", "🍅").pack(side="left")
+
+        # Grip para redimensionar (esquina inferior derecha del posit)
+        self._grip = tk.Label(
+            btn_frame, text="◢", bg=color, fg=fg,
+            font=("Segoe UI", 11, "bold"), cursor="sizing"
+        )
+        self._grip.pack(side="right", padx=(8, 0))
+        self._grip.bind("<Button-1>", self._start_resize)
+        self._grip.bind("<B1-Motion>", self._on_resize)
+        self._grip.bind("<ButtonRelease-1>", self._on_resize_end)
+
         PillButton(btn_frame, "Cerrar", self.close, "Danger", "small", "✖").pack(side="right")
 
         # Bindings para mover la ventana
@@ -77,6 +88,9 @@ class QuickStickyWindow(tk.Toplevel):
         # Centrar sobre la ventana principal (solo si no es una misión con posición guardada)
         if not skip_centering:
             self.after(10, self._center_over_master)
+        else:
+            # Misiones: la app fija la posición; aquí solo restauramos el tamaño.
+            self.after(10, self._apply_saved_size)
 
     def _center_over_master(self):
         """Centra la ventana sobre la ventana principal"""
@@ -87,15 +101,29 @@ class QuickStickyWindow(tk.Toplevel):
         mx = self.master.winfo_rootx()
         my = self.master.winfo_rooty()
 
-        w = min(420, max(320, int(mw * 0.5)))
-        h = self.winfo_height()
-        if h < 200:
-            h = 220
+        # Usar el tamaño guardado si existe; si no, calcular uno por defecto.
+        saved = self._load_saved_geometry()
+        if saved and saved.get("w"):
+            w = saved["w"]
+        else:
+            w = min(420, max(320, int(mw * 0.5)))
+        if saved and saved.get("h"):
+            h = saved["h"]
+        else:
+            h = self.winfo_height()
+            if h < 200:
+                h = 220
 
         x = mx + (mw - w) // 2
         y = my + (mh - h) // 2
 
         self.geometry(f"{w}x{h}+{x}+{y}")
+
+    def _apply_saved_size(self):
+        """Restaura solo el tamaño guardado (la posición la fija la app)."""
+        saved = self._load_saved_geometry()
+        if saved and saved.get("w") and saved.get("h"):
+            self.geometry(f"{saved['w']}x{saved['h']}")
 
     def _start_move(self, e):
         """Inicia el movimiento de la ventana"""
@@ -110,6 +138,43 @@ class QuickStickyWindow(tk.Toplevel):
     def _on_move_end(self, e):
         """Se llama al soltar el botón después de mover"""
         self._save_position()
+
+    def _start_resize(self, e):
+        """Inicia el redimensionado desde el grip."""
+        self._r_w = self.winfo_width()
+        self._r_h = self.winfo_height()
+        self._r_x = e.x_root
+        self._r_y = e.y_root
+        return "break"  # evita que también se dispare el movimiento de la ventana
+
+    def _on_resize(self, e):
+        """Redimensiona la ventana al arrastrar el grip."""
+        new_w = max(220, self._r_w + (e.x_root - self._r_x))
+        new_h = max(160, self._r_h + (e.y_root - self._r_y))
+        self.geometry(f"{new_w}x{new_h}")
+        return "break"
+
+    def _on_resize_end(self, e):
+        """Guarda el nuevo tamaño al soltar el grip."""
+        self._save_position()
+        return "break"
+
+    def _load_saved_geometry(self):
+        """Lee el dict {x, y, w, h} guardado para este posit, o None."""
+        import json
+        import os
+
+        task_id = getattr(self.task, "id", None)
+        if not task_id:
+            return None
+        positions_file = os.path.join("data", "posit_positions.json")
+        if not os.path.exists(positions_file):
+            return None
+        try:
+            with open(positions_file, "r", encoding="utf-8") as f:
+                return json.load(f).get(task_id)
+        except Exception:
+            return None
 
     def _save_position(self):
         """Guarda la posición actual del posit"""
@@ -135,10 +200,12 @@ class QuickStickyWindow(tk.Toplevel):
                 print(f"[WARNING] Error al leer posiciones: {e}")
                 positions_data = {}
 
-        # Guardar posición actual
+        # Guardar posición y tamaño actuales
         positions_data[task_id] = {
             "x": x,
-            "y": y
+            "y": y,
+            "w": self.winfo_width(),
+            "h": self.winfo_height(),
         }
 
         try:
