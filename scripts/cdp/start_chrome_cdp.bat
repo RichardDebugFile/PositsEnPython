@@ -160,7 +160,7 @@ echo.
 echo  Proximos pasos:
 echo    1. Abre YouTube en Chrome y reproduce un video
 echo    2. Usa la funcion Capturar en la aplicacion
-echo    3. Para verificar: python test_cdp.py
+echo    3. Para verificar: python scripts\cdp\test_cdp.py
 echo.
 echo ============================================================
 echo.

@@ -6,9 +6,13 @@ Script de prueba para verificar Chrome DevTools Protocol (CDP).
 
 import sys
 import io
+import os
 
 # Configurar stdout para UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
+# Permitir importar desde la raíz del repo aunque se ejecute desde scripts/cdp/
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from src.utils.cdp_helper import CDPHelper, is_cdp_available
 from src.utils.audio_detection import get_browser_playing_audio

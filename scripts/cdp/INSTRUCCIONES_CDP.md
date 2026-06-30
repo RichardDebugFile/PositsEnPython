@@ -78,7 +78,7 @@ Abre PowerShell o CMD y ejecuta:
 
 2. **Ejecuta el script de test:**
    ```bash
-   python test_cdp.py
+   python scripts\cdp\test_cdp.py
    ```
 
 3. Deberías ver:
@@ -177,6 +177,6 @@ Sí, funciona con cualquier navegador basado en Chromium:
 
 Si tienes problemas:
 
-1. Ejecuta `python test_cdp.py` y revisa los mensajes de error
+1. Ejecuta `python scripts\cdp\test_cdp.py` y revisa los mensajes de error
 2. Verifica que el navegador esté corriendo con el flag correcto
 3. Revisa que no haya otro navegador usando el puerto 9222

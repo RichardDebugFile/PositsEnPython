@@ -113,7 +113,7 @@ Al finalizar, verifica que CDP esté respondiendo correctamente:
    2. Reproducir un video
    3. Usar la función "Capturar" en la aplicación
 
-   Para verificar que funciona, ejecuta: python test_cdp.py
+   Para verificar que funciona, ejecuta: python scripts\cdp\test_cdp.py
 
 ═══════════════════════════════════════════════════════════════════
 ```
@@ -158,7 +158,7 @@ Al finalizar, verifica que CDP esté respondiendo correctamente:
 **Causa:** El navegador acaba de iniciar y CDP aún no está listo.
 
 **Solución:**
-- **Espera 5-10 segundos** y ejecuta `python test_cdp.py`
+- **Espera 5-10 segundos** y ejecuta `python scripts\cdp\test_cdp.py`
 - Si persiste, reinicia el script
 
 ---
@@ -238,7 +238,7 @@ Si obtienes un error que el puerto está en uso:
 
 1. **Verifica si ya hay un navegador con CDP abierto:**
    ```bash
-   python test_cdp.py
+   python scripts\cdp\test_cdp.py
    ```
 
 2. **Si funciona**, ya tienes CDP habilitado, no necesitas el script
@@ -271,7 +271,7 @@ Después de ejecutar el script:
 
 ```bash
 cd "G:\Documentos G\Ing. Sotware\ExperimentosPy\PositsEnPython"
-venv\Scripts\python test_cdp.py
+venv\Scripts\python scripts\cdp\test_cdp.py
 ```
 
 Deberías ver:
@@ -319,6 +319,6 @@ Si necesitas usar el navegador **sin** CDP:
 Si tienes problemas:
 
 1. **Lee la sección de "Solución de Problemas"**
-2. **Ejecuta `python test_cdp.py`** y revisa los mensajes
+2. **Ejecuta `python scripts\cdp\test_cdp.py`** y revisa los mensajes
 3. **Verifica que el navegador se cerró completamente**
 4. **Intenta con el otro navegador** (Chrome vs Brave)
