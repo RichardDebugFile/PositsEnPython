@@ -11,64 +11,7 @@ from ..config import MODERN_COLORS, GRADIENTS
 from ..services import YouTubeDownloader
 from ..ui.components import PillButton, create_centered_row
 from ..utils.logger import logger
-
-
-def sanitize_youtube_url(url):
-    """
-    Limpia una URL de YouTube eliminando parámetros innecesarios.
-    Mantiene solo el video ID para evitar errores con playlists, índices, etc.
-
-    Ejemplos:
-    - https://www.youtube.com/watch?v=H2kUfHhAL3M&list=RDMM&index=2
-      → https://www.youtube.com/watch?v=H2kUfHhAL3M
-    - https://youtu.be/H2kUfHhAL3M?si=xyz123
-      → https://youtu.be/H2kUfHhAL3M
-    """
-    import re
-    from urllib.parse import urlparse, parse_qs
-
-    if not url or not isinstance(url, str):
-        return url
-
-    url = url.strip()
-
-    # Si no es una URL de YouTube, devolverla tal cual
-    if not ("youtube.com" in url or "youtu.be" in url):
-        return url
-
-    try:
-        # Patrón para extraer video ID de diferentes formatos de URL
-        patterns = [
-            r'(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})',
-            r'youtube\.com/embed/([a-zA-Z0-9_-]{11})',
-            r'youtube\.com/v/([a-zA-Z0-9_-]{11})'
-        ]
-
-        video_id = None
-        for pattern in patterns:
-            match = re.search(pattern, url)
-            if match:
-                video_id = match.group(1)
-                break
-
-        if video_id:
-            # Retornar URL limpia con solo el video ID
-            return f"https://www.youtube.com/watch?v={video_id}"
-
-        # Si no se pudo extraer el ID, intentar con parse_qs
-        parsed = urlparse(url)
-        if parsed.hostname in ['www.youtube.com', 'youtube.com', 'm.youtube.com']:
-            params = parse_qs(parsed.query)
-            if 'v' in params:
-                video_id = params['v'][0]
-                return f"https://www.youtube.com/watch?v={video_id}"
-
-        # Si todo falla, devolver URL original
-        return url
-
-    except Exception as e:
-        logger.warning(f"Error sanitizando URL: {e}")
-        return url
+from ..utils.media_capture import sanitize_youtube_url
 
 
 class MusicDownloaderDialog(tk.Toplevel):
