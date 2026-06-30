@@ -1,4 +1,4 @@
-# ✨ Posits Virtuales v2.5
+# ✨ Posits Virtuales v2.6
 
 Aplicación multiplataforma de gestión de tareas con sistema de gamificación integrado, modo Pomodoro y versión móvil.
 
@@ -12,17 +12,20 @@ Aplicación multiplataforma de gestión de tareas con sistema de gamificación i
 ### Versión de Escritorio
 - 🎮 **Sistema de Gamificación Progresivo**: Gana XP, sube de nivel y completa misiones diarias personalizables
 - 📌 **Posits Flotantes Automáticos**: Misiones diarias se abren como posits siempre visibles en tu escritorio
+- 📐 **Posits Redimensionables**: Arrastra el grip de la esquina para cambiar el tamaño; recuerda posición **y** tamaño
 - 💾 **Memoria de Posiciones**: Los posits recuerdan dónde los colocaste
 - 🔄 **Reset de Posiciones**: Botón para reiniciar posiciones si quedan en lugares incómodos
-- 🍅 **Modo Pomodoro Flotante**: Ventana de Pomodoro con cola de tareas y reproductor de música integrado
+- 🍅 **Modo Pomodoro Flotante**: Temporizador con **anillo de progreso** y color por fase (trabajo/descanso), cola de tareas y música integrada
 - 🎵 **Reproductor de Música**: Control de música para sesiones de trabajo productivas
+- 🎧 **Capturar Música en Reproducción**: Detecta el video de YouTube que suena (vía CDP) y abre el descargador con la URL lista
 - 📎 **Archivos Adjuntos**: Adjunta PDFs, imágenes, documentos a tus tareas
 - 🔔 **Notificaciones Automáticas**: Alertas para tareas próximas a vencer
 - 🎨 **8 Colores Vibrantes**: Organiza visualmente tus tareas
-- 🤖 **Integración con IA (Ollama)**: Crea tareas desde lenguaje natural
-- 🎙️ **Dictado por Voz**: Transcripción de audio a texto
+- 🤖 **IA de un Clic (Ollama)**: Crea tareas desde lenguaje natural; **detecta/arranca Ollama** solo y muestra barra de carga (sin congelar la app)
+- 🎙️ **Dictado por Voz**: Transcripción de audio a texto con barra de carga
 - 📊 **Ordenamiento Avanzado**: Por fecha, prioridad, título o color
-- 🚀 **Inicio Automático con Windows**: Configura la app para que se abra al arrancar tu PC
+- 🧭 **Barra de Herramientas Agrupada**: Acciones por categoría con *tooltips*
+- 🚀 **Inicio Automático con Windows**: Arranca con tu PC, usando siempre el entorno virtual del proyecto
 
 ### Versión Móvil (Nueva!)
 - 📱 **Interfaz Móvil con KivyMD**: Aplicación completa para dispositivos móviles
@@ -96,12 +99,19 @@ pip install yt-dlp
 Para que **Posits Virtuales** se inicie automáticamente con Windows:
 
 ```bash
-python configurar_inicio_automatico.py
+# Opción 1: doble clic
+scripts\activar_inicio_automatico.bat
+
+# Opción 2: por consola (usa el venv)
+venv\Scripts\python scripts\install_startup.py
 ```
 
-Selecciona la opción **1** (Activar inicio automático).
+Selecciona la opción **1** (Activar inicio automático). Para desactivarlo, usa
+`scripts\desactivar_inicio_automatico.bat`.
 
-📖 **Guía completa**: Ver [INICIO_AUTOMATICO.md](INICIO_AUTOMATICO.md)
+> El launcher (`scripts/posits_launcher.pyw`) se relanza con el Python del
+> entorno virtual, de modo que el arranque automático siempre tiene todas las
+> dependencias disponibles.
 
 ## 📖 Uso
 
@@ -182,34 +192,36 @@ La app móvil tiene 3 pantallas principales:
 ### Versión de Escritorio
 ```
 PositsEnPython/
-├── main.py                    # Punto de entrada
+├── main.py                      # Punto de entrada
+├── requirements.txt
+├── CONTRIBUTING.md              # Flujo de ramas (GitFlow)
+├── ROADMAP.md                   # Backlog y próximas funciones
+├── pytest.ini
+├── .github/workflows/ci.yml     # CI: compileall + pylint + bandit + pytest
 ├── src/
-│   ├── app.py                # Aplicación principal Tkinter
-│   ├── config.py             # Configuración centralizada
-│   ├── models/
-│   │   ├── task.py          # Modelo de tarea
-│   │   ├── task_store.py    # Persistencia de tareas
-│   │   ├── gamification.py  # Sistema de gamificación
-│   │   └── pomodoro.py      # Gestor de Pomodoro
-│   ├── services/
-│   │   ├── ollama_service.py      # Integración IA
-│   │   ├── stt_service.py         # Speech-to-text
-│   │   ├── attachment_manager.py  # Gestión de adjuntos
-│   │   ├── notification_service.py # Notificaciones
-│   │   ├── music_player.py        # Reproductor música
-│   │   └── youtube_downloader.py  # Descarga música YouTube
-│   ├── ui/
-│   │   ├── components/      # Componentes reutilizables
-│   │   ├── pomodoro_window.py # Ventana flotante Pomodoro
-│   │   └── ...
-│   ├── dialogs/             # Diálogos modales
-│   └── utils/               # Utilidades
+│   ├── app.py                   # Aplicación principal Tkinter
+│   ├── config.py                # Configuración centralizada
+│   ├── models/                  # task.py, store.py, gamification.py, pomodoro.py
+│   ├── services/                # ollama.py, stt.py, attachments.py, notifications.py,
+│   │                            #   music_player.py, youtube_downloader.py
+│   ├── ui/                      # paneles, pomodoro_window.py, loading.py,
+│   │                            #   components.py (PillButton, Tooltip, ...)
+│   ├── dialogs/                 # add_task.py, ollama_capture.py, music_downloader.py
+│   └── utils/                   # dates, colors, logger, cdp_helper,
+│                                #   audio_detection, media_capture
+├── scripts/
+│   ├── posits_launcher.pyw      # Launcher de autostart (relanza con el venv)
+│   ├── install_startup.py       # Registrar/quitar inicio automático
+│   └── cdp/                     # Scripts y guías para CDP (captura de YouTube)
+├── tests/                       # pytest (unitarios + integración)
+│   └── manual/                  # diagnósticos manuales (red/audio/Vosk/CDP)
 ├── data/
-│   ├── tasks.json           # Base de datos tareas
-│   ├── gamification.json    # Progreso gamificación
-│   ├── attachments/         # Archivos adjuntos
-│   └── music/              # Archivos MP3 para Pomodoro
-└── docs/                    # Documentación
+│   ├── notes.json               # Base de datos de tareas
+│   ├── gamification.json        # Progreso de gamificación
+│   ├── posit_positions.json     # Posición y tamaño de los posits
+│   ├── attachments/             # Archivos adjuntos
+│   └── music/                   # Archivos MP3 para Pomodoro
+└── mobile-prototype/            # Versión móvil (KivyMD)
 ```
 
 ### Versión Móvil
@@ -309,6 +321,8 @@ Edita `src/config.py` para personalizar:
 ## 📚 Documentación
 
 ### General
+- [Guía de contribución / GitFlow](CONTRIBUTING.md)
+- [Roadmap y backlog](ROADMAP.md)
 - [Instalación Detallada](docs/INSTALACION_RAPIDA.md)
 - [Documentación de Migración](docs/migration/)
 - [Arquitectura del Sistema](docs/REFACTORIZACION_V2.md)
@@ -324,15 +338,39 @@ Edita `src/config.py` para personalizar:
 - Sistema de Gamificación (ver `src/models/gamification.py`)
 - Modo Pomodoro (ver `src/models/pomodoro.py` y `mobile-prototype/services/pomodoro.py`)
 
+## 🧪 Desarrollo
+
+### Tests
+
+Suite con **pytest** (unitarios + integración/flujo), aislada en archivos
+temporales (no toca `data/`):
+
+```bash
+venv\Scripts\python -m pytest
+```
+
+Los scripts que requieren red, audio, modelos Vosk o un navegador con CDP están
+en `tests/manual/` y se ejecutan a mano (no entran en la suite automática).
+
+### Integración continua (CI)
+
+`.github/workflows/ci.yml` corre en cada `push`/`pull request` a `main` y
+`develop` sobre **windows-latest**: `compileall` + `pylint` + `bandit` + `pytest`.
+
+### Flujo de ramas (GitFlow)
+
+- `main`: estable/publicado · `develop`: integración · `feature/*`,
+  `release/*`, `hotfix/*`: temporales.
+- Detalles y comandos en **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+
 ## 🤝 Contribuir
 
-Las contribuciones son bienvenidas. Por favor:
+Las contribuciones son bienvenidas:
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Haz fork del proyecto.
+2. Crea tu rama desde `develop`: `git checkout -b feature/mi-mejora`.
+3. Asegúrate de que `pytest` pase.
+4. Abre un Pull Request hacia `develop` (ver [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## 📝 Licencia
 
@@ -350,6 +388,27 @@ Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
 - Todos los contribuidores
 
 ---
+
+## 🆕 Novedades en v2.6
+
+### Estabilidad y arranque
+- ✅ La ventana principal ya **no** se queda encima de todas las apps (solo los posits)
+- ✅ Arranque sin "flash negro" (la ventana se muestra ya construida y pintada)
+- ✅ Cierre limpio (detiene servicios en segundo plano y guarda estado)
+- ✅ Inicio automático robusto: el launcher se relanza con el Python del venv
+
+### Experiencia de uso
+- ✅ Pomodoro con **anillo de progreso** y color por fase (trabajo/descanso)
+- ✅ Posits **redimensionables** (grip de esquina + memoria de tamaño)
+- ✅ IA (Ollama) de **un clic**: auto-arranque + barra de carga, sin congelar la UI
+- ✅ Barras de carga en IA y dictado por voz (STT)
+- ✅ Barra de herramientas **agrupada** con *tooltips*
+- ✅ **🎧 Capturar** la música de YouTube en reproducción (vía CDP)
+
+### Calidad e infraestructura
+- ✅ Suite de **tests (pytest)** + **CI** (GitHub Actions, windows-latest)
+- ✅ Flujo de ramas **GitFlow** ([CONTRIBUTING.md](CONTRIBUTING.md))
+- ✅ Refactor: lógica de captura extraída a `utils/media_capture` (testeable)
 
 ## 🆕 Novedades en v2.5
 
@@ -369,13 +428,14 @@ Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
 - ✅ Sistema de rachas mejorado
 
 ### Próximas Características (Roadmap)
+Ver **[ROADMAP.md](ROADMAP.md)** para el backlog completo y los procedimientos. Destacados:
+- 🖥️ **Monitoreo de tiempo de uso por aplicación** (medir cuánto tiempo pasas en cada app)
+- 🎨 Tema claro más vibrante (paleta y jerarquía visual)
 - 🔄 Sincronización en tiempo real entre escritorio y móvil
 - 📊 Gráficas de productividad
-- 🎨 Temas personalizables
-- 🌐 Exportar/importar datos
 - 📱 Compilación APK para Android
 - 🍎 Soporte para iOS
 
 ---
 
-**Versión 2.5** - Versión Móvil + Pomodoro Mejorado • Noviembre 2025
+**Versión 2.6** - Estabilidad, UX (Pomodoro/posits/IA) y CI/CD • 2026
