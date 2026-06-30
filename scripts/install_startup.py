@@ -10,8 +10,10 @@ from pathlib import Path
 
 APP_NAME = "PositsVirtuales"
 SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
 LAUNCHER_PATH = SCRIPT_DIR / "posits_launcher.pyw"
 PYTHON_EXECUTABLE = sys.executable  # Ruta al python.exe del venv o sistema
+VENV_PYTHONW = PROJECT_ROOT / "venv" / "Scripts" / "pythonw.exe"  # preferido para autostart
 
 
 def install_startup():
@@ -25,14 +27,16 @@ def install_startup():
             winreg.KEY_SET_VALUE
         )
 
-        # Crear el comando de inicio
-        # Usar pythonw.exe para que no muestre consola
-        python_dir = Path(PYTHON_EXECUTABLE).parent
-        pythonw_exe = python_dir / "pythonw.exe"
-
-        if not pythonw_exe.exists():
-            # Fallback a python.exe si pythonw.exe no existe
-            pythonw_exe = PYTHON_EXECUTABLE
+        # Crear el comando de inicio. Usar pythonw.exe para que no muestre consola.
+        # Preferir el pythonw del venv del proyecto (tiene las dependencias).
+        if VENV_PYTHONW.exists():
+            pythonw_exe = VENV_PYTHONW
+        else:
+            python_dir = Path(PYTHON_EXECUTABLE).parent
+            pythonw_exe = python_dir / "pythonw.exe"
+            if not pythonw_exe.exists():
+                # Fallback a python.exe si pythonw.exe no existe
+                pythonw_exe = Path(PYTHON_EXECUTABLE)
 
         command = f'"{pythonw_exe}" "{LAUNCHER_PATH}"'
 
