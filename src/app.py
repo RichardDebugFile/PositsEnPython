@@ -33,6 +33,7 @@ from .ui import (
     CalendarPanel,
     MiniCalendarWidget,
 )
+from .ui.components import Tooltip
 from .dialogs import ModernAddTaskDialog, OllamaCaptureDialog
 from .services import NotificationService
 from .services.music_player import MusicPlayer
@@ -284,43 +285,54 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         toolbar.pack(fill="x", padx=8, pady=8)
         center = create_centered_row(toolbar)
 
-        PillButton(
-            center, "Nueva Tarea", self.open_add_dialog, "Primary", "normal", "➕"
-        ).pack(side="left", padx=6)
+        def _sep():
+            """Separador vertical entre grupos de la barra."""
+            tk.Frame(center, bg=MODERN_COLORS["TextLight"], width=1, height=24).pack(
+                side="left", padx=8, pady=4
+            )
 
+        # --- Grupo: crear / ver ---
+        b_new = PillButton(center, "Nueva Tarea", self.open_add_dialog, "Primary", "normal", "➕")
+        b_new.pack(side="left", padx=6)
+        Tooltip(b_new, "Crear una nueva tarea")
+
+        b_notes = PillButton(center, "Abrir Notas", self.reopen_notes, "Secondary", "normal", "📝")
+        b_notes.pack(side="left", padx=6)
+        Tooltip(b_notes, "Reabrir las notas/posit guardados")
+
+        _sep()
+
+        # --- Grupo: herramientas ---
+        b_ia = PillButton(center, "IA (Ollama)", self.open_ollama_dialog, "Success", "normal", "🤖")
+        b_ia.pack(side="left", padx=6)
+        Tooltip(b_ia, "Crear tareas con IA local (Ollama)")
+
+        b_music = PillButton(center, "Descargar Música", self.open_music_downloader, "Info", "normal", "🎵")
+        b_music.pack(side="left", padx=6)
+        Tooltip(b_music, "Descargar música desde YouTube")
+
+        b_pomo = PillButton(center, "Pomodoro", self.open_pomodoro, "Warning", "normal", "🍅")
+        b_pomo.pack(side="left", padx=6)
+        Tooltip(b_pomo, "Abrir el temporizador Pomodoro")
+
+        b_cal = PillButton(center, "Mini Cal", self.toggle_mini_calendar, "Primary", "normal", "📅")
+        b_cal.pack(side="left", padx=6)
+        Tooltip(b_cal, "Mostrar/ocultar el mini calendario")
+
+        _sep()
+
+        # --- Grupo: filtros y orden ---
         self.var_only_pending = tk.BooleanVar(value=False)
-        tk.Checkbutton(
+        chk_pending = tk.Checkbutton(
             center,
             text="👁️ Solo Pendientes",
             variable=self.var_only_pending,
             command=self.render_tasks,
             bg=center.cget("bg"),
             font=("Segoe UI", 9, "bold")
-        ).pack(side="left", padx=8)
-
-        PillButton(
-            center, "Abrir Notas", self.reopen_notes, "Secondary", "normal", "📝"
-        ).pack(side="left", padx=6)
-
-        # --- Botón IA (Ollama) ---
-        PillButton(
-            center, "IA (Ollama)", self.open_ollama_dialog, "Success", "normal", "🤖"
-        ).pack(side="left", padx=6)
-
-        # --- Botón Descargar Música ---
-        PillButton(
-            center, "Descargar Música", self.open_music_downloader, "Info", "normal", "🎵"
-        ).pack(side="left", padx=6)
-
-        # --- Botón Pomodoro ---
-        PillButton(
-            center, "Pomodoro", self.open_pomodoro, "Warning", "normal", "🍅"
-        ).pack(side="left", padx=6)
-
-        # --- Botón Mini Calendario ---
-        PillButton(
-            center, "Mini Cal", self.toggle_mini_calendar, "Primary", "normal", "📅"
-        ).pack(side="left", padx=6)
+        )
+        chk_pending.pack(side="left", padx=8)
+        Tooltip(chk_pending, "Mostrar solo tareas sin completar")
 
         # Ordenamiento
         sort_frame = tk.Frame(center, bg=center.cget("bg"))
@@ -347,20 +359,25 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             "<<ComboboxSelected>>", lambda e: self.render_tasks()
         )
 
+        _sep()
+
+        # --- Grupo: ventana ---
         # Solo los posits flotantes deben quedar siempre encima; la ventana
         # principal arranca normal. El usuario puede activarlo con este toggle.
         self.var_topmost = tk.BooleanVar(value=False)
 
         def _toggle_topmost():
             self.attributes("-topmost", self.var_topmost.get())
-        tk.Checkbutton(
+        chk_top = tk.Checkbutton(
             center,
             text="Siempre arriba",
             variable=self.var_topmost,
             command=_toggle_topmost,
             bg=center.cget("bg"),
             font=("Segoe UI", 9, "bold")
-        ).pack(side="left", padx=8)
+        )
+        chk_top.pack(side="left", padx=8)
+        Tooltip(chk_top, "Mantener la ventana principal por encima del resto")
         _toggle_topmost()
 
     def _create_content_area(self):
