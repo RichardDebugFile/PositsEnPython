@@ -30,6 +30,7 @@ pyinstaller==6.14.2
 pyinstaller-hooks-contrib==2025.8
 pyjsparser==2.7.1
 pylint==4.0.2
+pytest==9.1.1
 PyPrind==2.11.3
 psutil==7.2.2
 pySmartDL==1.3.4
