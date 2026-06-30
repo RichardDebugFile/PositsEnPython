@@ -287,7 +287,7 @@ class GamificationPanel(tk.Frame):
         music_frame = tk.Frame(parent, bg=GRADIENTS["Card"][0])
         music_frame.pack(fill="x", pady=(10, 0))
 
-        self.music_panel = MusicPanel(music_frame, self.music_player, bg=GRADIENTS["Card"][0])
+        self.music_panel = MusicPanel(music_frame, self.music_player, app=self.app, bg=GRADIENTS["Card"][0])
         self.music_panel.pack(fill="x")
 
     def refresh(self):

@@ -493,10 +493,10 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         OllamaCaptureDialog(self, self._on_add)
 
     # ---------- Descargador de Música ----------
-    def open_music_downloader(self):
+    def open_music_downloader(self, initial_query=None):
         """Abre diálogo de descarga de música desde YouTube"""
         from .dialogs import MusicDownloaderDialog
-        MusicDownloaderDialog(self, self.music_player)
+        MusicDownloaderDialog(self, self.music_player, initial_query=initial_query)
 
     def open_pomodoro(self):
         """Abre la ventana de Pomodoro"""

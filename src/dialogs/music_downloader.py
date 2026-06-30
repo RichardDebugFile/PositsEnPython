@@ -13,13 +13,71 @@ from ..ui.components import PillButton, create_centered_row
 from ..utils.logger import logger
 
 
+def sanitize_youtube_url(url):
+    """
+    Limpia una URL de YouTube eliminando parámetros innecesarios.
+    Mantiene solo el video ID para evitar errores con playlists, índices, etc.
+
+    Ejemplos:
+    - https://www.youtube.com/watch?v=H2kUfHhAL3M&list=RDMM&index=2
+      → https://www.youtube.com/watch?v=H2kUfHhAL3M
+    - https://youtu.be/H2kUfHhAL3M?si=xyz123
+      → https://youtu.be/H2kUfHhAL3M
+    """
+    import re
+    from urllib.parse import urlparse, parse_qs
+
+    if not url or not isinstance(url, str):
+        return url
+
+    url = url.strip()
+
+    # Si no es una URL de YouTube, devolverla tal cual
+    if not ("youtube.com" in url or "youtu.be" in url):
+        return url
+
+    try:
+        # Patrón para extraer video ID de diferentes formatos de URL
+        patterns = [
+            r'(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})',
+            r'youtube\.com/embed/([a-zA-Z0-9_-]{11})',
+            r'youtube\.com/v/([a-zA-Z0-9_-]{11})'
+        ]
+
+        video_id = None
+        for pattern in patterns:
+            match = re.search(pattern, url)
+            if match:
+                video_id = match.group(1)
+                break
+
+        if video_id:
+            # Retornar URL limpia con solo el video ID
+            return f"https://www.youtube.com/watch?v={video_id}"
+
+        # Si no se pudo extraer el ID, intentar con parse_qs
+        parsed = urlparse(url)
+        if parsed.hostname in ['www.youtube.com', 'youtube.com', 'm.youtube.com']:
+            params = parse_qs(parsed.query)
+            if 'v' in params:
+                video_id = params['v'][0]
+                return f"https://www.youtube.com/watch?v={video_id}"
+
+        # Si todo falla, devolver URL original
+        return url
+
+    except Exception as e:
+        logger.warning(f"Error sanitizando URL: {e}")
+        return url
+
+
 class MusicDownloaderDialog(tk.Toplevel):
     """
     Diálogo para descargar música desde YouTube
     Integrado con el estilo visual de Posits Virtuales
     """
 
-    def __init__(self, master, music_player=None):
+    def __init__(self, master, music_player=None, initial_query=None):
         super().__init__(master)
         self.title("🎵 Descargar Música")
         self.resizable(False, False)
@@ -36,6 +94,17 @@ class MusicDownloaderDialog(tk.Toplevel):
         self.quality_var = tk.StringVar(value="192")
         self.status_var = tk.StringVar(value="Listo para descargar")
         self.progress_var = tk.DoubleVar(value=0.0)
+
+        # Si se proporciona una búsqueda inicial o URL
+        if initial_query:
+            # Si es una URL directa, sanitizarla y usarla
+            if initial_query.startswith("http://") or initial_query.startswith("https://"):
+                clean_url = sanitize_youtube_url(initial_query)
+                self.url_var.set(clean_url)
+                logger.info(f"URL sanitizada: {initial_query} → {clean_url}")
+            else:
+                # Si es texto de búsqueda, usar formato ytsearch
+                self.url_var.set(f"ytsearch1:{initial_query}")
 
         self._build_ui()
 
@@ -82,14 +151,15 @@ class MusicDownloaderDialog(tk.Toplevel):
         self.url_entry.pack(side="left", fill="x", expand=True, ipady=6, ipadx=8)
         self.url_entry.focus()
 
-        # Botón para obtener info
-        PillButton(
+        # Botón para obtener info (guardar referencia)
+        self.btn_info = PillButton(
             url_frame,
             "ℹ️ Info",
             self._get_video_info,
             "Secondary",
             "normal"
-        ).pack(side="left", padx=(8, 0))
+        )
+        self.btn_info.pack(side="left", padx=(8, 0))
 
         # Info del video (oculto inicialmente)
         self.info_frame = tk.Frame(content, bg=GRADIENTS["Card"][1])
@@ -187,7 +257,7 @@ class MusicDownloaderDialog(tk.Toplevel):
         ).pack(side="left", padx=6, pady=4)
 
     def _get_video_info(self):
-        """Obtiene y muestra información del video"""
+        """Obtiene y muestra información del video (con thread y progreso)"""
         url = self.url_var.get().strip()
 
         if not url:
@@ -197,37 +267,91 @@ class MusicDownloaderDialog(tk.Toplevel):
             )
             return
 
-        self.status_var.set("Obteniendo información del video...")
+        # Sanitizar URL de YouTube si es necesario
+        if url.startswith("http://") or url.startswith("https://"):
+            clean_url = sanitize_youtube_url(url)
+            if clean_url != url:
+                logger.info(f"URL sanitizada: {url} → {clean_url}")
+                url = clean_url
+                self.url_var.set(clean_url)  # Actualizar campo también
+
+        # Iniciar búsqueda en thread separado
+        import threading
+
+        def fetch_info():
+            """Thread worker para obtener información"""
+            try:
+                info = self.downloader.get_video_info(url)
+
+                # Actualizar UI desde el thread principal
+                self.after(0, lambda: self._update_video_info(info))
+
+            except Exception as e:
+                logger.error(f"Error obteniendo info: {e}")
+                self.after(0, lambda: self._on_info_error(str(e)))
+
+        # Cambiar a modo indeterminado (animado)
+        self.progress_bar.config(mode="indeterminate")
+        self.progress_bar.start(10)  # Velocidad de animación
+
+        # Deshabilitar botones mientras busca
+        self.btn_info.config(state="disabled")
+        self.btn_download.config(state="disabled")
+
+        # Actualizar estado
+        self.status_var.set("🔍 Buscando información del video...")
         self.update_idletasks()
 
-        try:
-            info = self.downloader.get_video_info(url)
+        # Iniciar thread
+        thread = threading.Thread(target=fetch_info, daemon=True)
+        thread.start()
 
-            if info:
-                duration_min = info.get("duration", 0) // 60 if info.get("duration") else 0
-                duration_sec = info.get("duration", 0) % 60 if info.get("duration") else 0
+    def _update_video_info(self, info):
+        """Actualiza la UI con la información obtenida (llamado desde thread)"""
+        # Detener animación
+        self.progress_bar.stop()
+        self.progress_bar.config(mode="determinate")
+        self.progress_var.set(0)
 
-                info_text = (
-                    f"📺 {info.get('title', 'Sin título')}\n"
-                    f"👤 {info.get('uploader', 'Desconocido')}\n"
-                    f"⏱️ Duración: {duration_min}:{duration_sec:02d}\n"
-                    f"👁️ Vistas: {info.get('view_count', 0):,}"
-                )
+        # Restaurar botones
+        self.btn_info.config(state="normal")
+        self.btn_download.config(state="normal")
 
-                self.info_label.config(text=info_text)
-                self.info_frame.pack(fill="x", pady=(0, 12))
-                self.status_var.set("Información obtenida correctamente")
-            else:
-                messagebox.showerror(
-                    "Error",
-                    "No se pudo obtener información del video"
-                )
-                self.status_var.set("Error al obtener información")
+        if info:
+            duration_min = info.get("duration", 0) // 60 if info.get("duration") else 0
+            duration_sec = info.get("duration", 0) % 60 if info.get("duration") else 0
 
-        except Exception as e:
-            logger.error(f"Error obteniendo info: {e}")
-            messagebox.showerror("Error", f"Error: {str(e)}")
-            self.status_var.set("Error")
+            info_text = (
+                f"📺 {info.get('title', 'Sin título')}\n"
+                f"👤 {info.get('uploader', 'Desconocido')}\n"
+                f"⏱️ Duración: {duration_min}:{duration_sec:02d}\n"
+                f"👁️ Vistas: {info.get('view_count', 0):,}"
+            )
+
+            self.info_label.config(text=info_text)
+            self.info_frame.pack(fill="x", pady=(0, 12))
+            self.status_var.set("✅ Información obtenida correctamente")
+        else:
+            messagebox.showerror(
+                "Error",
+                "No se pudo obtener información del video"
+            )
+            self.status_var.set("❌ Error al obtener información")
+
+    def _on_info_error(self, error_msg):
+        """Maneja errores al obtener información (llamado desde thread)"""
+        # Detener animación
+        self.progress_bar.stop()
+        self.progress_bar.config(mode="determinate")
+        self.progress_var.set(0)
+
+        # Restaurar botones
+        self.btn_info.config(state="normal")
+        self.btn_download.config(state="normal")
+
+        # Mostrar error
+        messagebox.showerror("Error", f"Error: {error_msg}")
+        self.status_var.set("❌ Error")
 
     def _start_download(self):
         """Inicia la descarga del video"""
@@ -239,6 +363,14 @@ class MusicDownloaderDialog(tk.Toplevel):
                 "Por favor ingresa la URL del video de YouTube"
             )
             return
+
+        # Sanitizar URL de YouTube si es necesario
+        if url.startswith("http://") or url.startswith("https://"):
+            clean_url = sanitize_youtube_url(url)
+            if clean_url != url:
+                logger.info(f"URL sanitizada para descarga: {url} → {clean_url}")
+                url = clean_url
+                self.url_var.set(clean_url)  # Actualizar campo también
 
         if self.downloader.is_downloading:
             messagebox.showinfo(
