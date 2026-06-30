@@ -63,6 +63,10 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.title(APP_NAME)
         self.configure(bg=self.BG)
 
+        # Ocultar la ventana mientras se construye para evitar el "flash negro"
+        # al arranque; se vuelve a mostrar ya pintada al final de __init__.
+        self.withdraw()
+
         # Inicializar reproductor de música
         try:
             self.music_player = MusicPlayer()
@@ -112,6 +116,14 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.notification_service.start()
 
         self.render_tasks()
+
+        # Mostrar la ventana ya construida y pintada (evita el "flash negro")
+        self.update_idletasks()
+        self.deiconify()
+
+        # Cierre limpio: detener servicios en segundo plano al cerrar la ventana
+        self.protocol("WM_DELETE_WINDOW", self._on_closing)
+
         self.after(200, self.reopen_notes)
         self.after(400, self.open_daily_mission_posits)  # Abrir posits de misiones diarias
 
@@ -335,7 +347,9 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             "<<ComboboxSelected>>", lambda e: self.render_tasks()
         )
 
-        self.var_topmost = tk.BooleanVar(value=True)
+        # Solo los posits flotantes deben quedar siempre encima; la ventana
+        # principal arranca normal. El usuario puede activarlo con este toggle.
+        self.var_topmost = tk.BooleanVar(value=False)
 
         def _toggle_topmost():
             self.attributes("-topmost", self.var_topmost.get())
@@ -983,3 +997,21 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     def _update_statistics(self):
         """Actualiza estadísticas (wrapper local)"""
         update_statistics(self)
+
+    def _on_closing(self):
+        """Cierre limpio: detiene servicios en segundo plano y guarda estado."""
+        try:
+            if getattr(self, "notification_service", None):
+                self.notification_service.stop()
+        except Exception:
+            pass
+        try:
+            if getattr(self, "music_player", None):
+                self.music_player.stop()
+        except Exception:
+            pass
+        try:
+            self.store.save()
+        except Exception:
+            pass
+        self.destroy()
