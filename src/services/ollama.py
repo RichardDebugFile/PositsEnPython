@@ -5,10 +5,12 @@ Servicio de integración con Ollama (IA local)
 """
 
 import json
+import time
 import base64
+import shutil
+import subprocess
 import urllib.request
 import urllib.error
-from tkinter import messagebox
 
 from ..config import OLLAMA_URL, OLLAMA_MODEL, VIBRANT_COLORS, COLOR_LABELS
 from ..utils.dates import fmt_date, today_date, valid_date
@@ -76,12 +78,12 @@ def ollama_chat_json(
             logger.debug(f"Ollama.raw = {raw_text}")
             raw = json.loads(raw_text)
     except urllib.error.URLError as e:
+        # Sin UI aquí: el servicio puede llamarse desde un hilo. El diálogo
+        # decide cómo informar el error en el hilo principal.
         log_exception(logger, "Ollama.URLError", e)
-        messagebox.showerror("Ollama", f"No se pudo conectar a {url_base}:\n{e}")
         return None
     except Exception as e:
         log_exception(logger, "Ollama.Error", e)
-        messagebox.showerror("Ollama", f"Error llamando a Ollama:\n{e}")
         return None
 
     content = (raw.get("message") or {}).get("content", "")
@@ -99,7 +101,6 @@ def ollama_chat_json(
             return obj
 
     logger.warning("La respuesta de Ollama no fue un JSON válido")
-    messagebox.showwarning("Ollama", "La respuesta de Ollama no fue un JSON válido.")
     return None
 
 
@@ -205,3 +206,71 @@ def _encode_image_base64(path: str) -> str:
     """Codifica una imagen en base64"""
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode("ascii")
+
+
+# --------------------------- Disponibilidad de Ollama ---------------------------
+
+def is_ollama_running(url_base: str = OLLAMA_URL, timeout: float = 2.0) -> bool:
+    """Devuelve True si el servidor de Ollama responde en ``url_base``."""
+    try:
+        with urllib.request.urlopen(url_base + "/api/tags", timeout=timeout) as resp:
+            status = getattr(resp, "status", None) or resp.getcode()
+            return 200 <= status < 300
+    except Exception:
+        return False
+
+
+def start_ollama_server() -> bool:
+    """
+    Lanza ``ollama serve`` en segundo plano si el ejecutable está disponible.
+    No espera a que esté listo (usar :func:`ensure_ollama_running`).
+    """
+    exe = shutil.which("ollama")
+    if not exe:
+        logger.warning("No se encontró el ejecutable 'ollama' en el PATH")
+        return False
+    try:
+        creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        subprocess.Popen(
+            [exe, "serve"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=creationflags,
+        )
+        logger.info("Lanzado 'ollama serve' en segundo plano")
+        return True
+    except Exception as e:
+        log_exception(logger, "Ollama.start", e)
+        return False
+
+
+def ensure_ollama_running(
+    url_base: str = OLLAMA_URL,
+    on_status=None,
+    total_wait: float = 20.0,
+) -> bool:
+    """
+    Garantiza que Ollama esté disponible: si no responde, intenta arrancarlo y
+    espera hasta que conteste (o se agoten ``total_wait`` segundos).
+
+    IMPORTANTE: hace ``time.sleep``; debe llamarse desde un hilo, NO desde la UI.
+
+    Args:
+        on_status: callback opcional ``on_status(str)`` para reportar progreso.
+    """
+    if is_ollama_running(url_base):
+        return True
+
+    if on_status:
+        on_status("Iniciando Ollama…")
+
+    if not start_ollama_server():
+        return False
+
+    deadline = time.monotonic() + total_wait
+    while time.monotonic() < deadline:
+        if is_ollama_running(url_base):
+            return True
+        time.sleep(0.5)
+
+    return False
