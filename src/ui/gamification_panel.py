@@ -404,6 +404,9 @@ class GamificationPanel(tk.Frame):
                 variable=var,
                 command=lambda k=mission["key"]: self._on_mission_checked(k),
                 bg=MODERN_COLORS["Light"],
+                fg=MODERN_COLORS["Text"],
+                selectcolor=MODERN_COLORS["White"],
+                activebackground=MODERN_COLORS["Light"],
                 font=("Segoe UI", 11)
             )
             checkbox.pack(side="left", padx=(8, 4))
@@ -420,13 +423,15 @@ class GamificationPanel(tk.Frame):
                 title_frame,
                 text=mission["icon"],
                 bg=MODERN_COLORS["Light"],
+                fg=MODERN_COLORS["Text"],
                 font=("Segoe UI", 9)
             ).pack(side="left", padx=(0, 4))
 
             title_entry = tk.Entry(
                 title_frame,
-                bg="white",
+                bg=MODERN_COLORS["White"],
                 fg=MODERN_COLORS["Text"],
+                insertbackground=MODERN_COLORS["Text"],
                 font=("Segoe UI", 9, "bold"),
                 relief="flat",
                 bd=1
@@ -437,8 +442,9 @@ class GamificationPanel(tk.Frame):
             # Description editable (Entry)
             desc_entry = tk.Entry(
                 content,
-                bg="white",
+                bg=MODERN_COLORS["White"],
                 fg=MODERN_COLORS["TextLight"],
+                insertbackground=MODERN_COLORS["Text"],
                 font=("Segoe UI", 8),
                 relief="flat",
                 bd=1
