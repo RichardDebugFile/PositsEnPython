@@ -34,18 +34,21 @@ class QuickStickyWindow(tk.Toplevel):
 
         pad = 12
 
-        # Título
-        tk.Label(
+        # Título (wraplength dinámico: se ajusta al ancho del posit)
+        self.title_label = tk.Label(
             self,
             text=getattr(task, "title", "") or "(Sin título)",
             bg=color,
             fg=fg,
             font=("Segoe UI", 13, "bold"),
-            anchor="w"
-        ).pack(fill="x", padx=pad, pady=(pad, 4))
+            anchor="w",
+            justify="left",
+            wraplength=360
+        )
+        self.title_label.pack(fill="x", padx=pad, pady=(pad, 4))
 
-        # Descripción
-        tk.Label(
+        # Descripción (wraplength dinámico)
+        self.desc_label = tk.Label(
             self,
             text=getattr(task, "desc", ""),
             bg=color,
@@ -53,8 +56,9 @@ class QuickStickyWindow(tk.Toplevel):
             font=("Segoe UI", 10),
             anchor="nw",
             justify="left",
-            wraplength=380
-        ).pack(fill="both", expand=True, padx=pad, pady=(0, 6))
+            wraplength=360
+        )
+        self.desc_label.pack(fill="both", expand=True, padx=pad, pady=(0, 6))
 
         # Fecha
         tk.Label(
@@ -88,6 +92,9 @@ class QuickStickyWindow(tk.Toplevel):
         self.bind("<B1-Motion>", self._on_move)
         self.bind("<ButtonRelease-1>", self._on_move_end)  # Guardar al soltar
         self.bind("<Escape>", lambda e: self.close())
+
+        # Reajustar el ajuste de línea de los textos al ancho actual del posit
+        self.bind("<Configure>", self._reflow_text, add="+")
 
         # Centrar sobre la ventana principal (solo si no es una misión con posición guardada)
         if not skip_centering:
@@ -123,6 +130,7 @@ class QuickStickyWindow(tk.Toplevel):
 
         self.geometry(f"{w}x{h}+{x}+{y}")
         self.deiconify()  # mostrar ya posicionado y pintado
+        self._reflow_text()
 
     def _apply_saved_size(self):
         """Restaura solo el tamaño guardado (la posición la fija la app)."""
@@ -130,6 +138,7 @@ class QuickStickyWindow(tk.Toplevel):
         if saved and saved.get("w") and saved.get("h"):
             self.geometry(f"{saved['w']}x{saved['h']}")
         self.deiconify()  # mostrar ya posicionado y pintado
+        self._reflow_text()
 
     def _start_move(self, e):
         """Inicia el movimiento de la ventana"""
@@ -144,6 +153,18 @@ class QuickStickyWindow(tk.Toplevel):
     def _on_move_end(self, e):
         """Se llama al soltar el botón después de mover"""
         self._save_position()
+
+    def _reflow_text(self, event=None):
+        """Ajusta el wraplength de título y descripción al ancho actual del posit."""
+        try:
+            width = self.winfo_width()
+            if width <= 1:
+                return
+            wl = max(100, width - 30)  # descontar padding lateral
+            self.title_label.configure(wraplength=wl)
+            self.desc_label.configure(wraplength=wl)
+        except Exception:
+            pass
 
     def _start_resize(self, e):
         """Inicia el redimensionado desde el grip."""
