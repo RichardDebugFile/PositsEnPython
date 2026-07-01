@@ -16,7 +16,10 @@ except ImportError:
     TkinterDnD = None
     DND_AVAILABLE = False
 
-from .config import APP_NAME, MODERN_COLORS, GRADIENTS, COLOR_LABELS, LABEL_TO_KEY, VIBRANT_COLORS, PRIORITY_LEVELS
+from .config import (
+    APP_NAME, MODERN_COLORS, GRADIENTS, COLOR_LABELS, LABEL_TO_KEY,
+    VIBRANT_COLORS, PRIORITY_LEVELS, load_settings,
+)
 from .models import TaskStore, PomodoroManager
 from .utils.dates import today_date, fmt_date, parse_date
 from .utils.logger import logger
@@ -39,16 +42,26 @@ from .services import NotificationService
 from .services.music_player import MusicPlayer
 
 
+def _alive(app, name):
+    """True si el widget `app.<name>` existe y no fue destruido (p. ej. tras un
+    rebuild de tema, las referencias viejas siguen pero apuntan a widgets muertos)."""
+    w = getattr(app, name, None)
+    try:
+        return w is not None and bool(w.winfo_exists())
+    except Exception:
+        return False
+
+
 def update_statistics(app):
     """Actualiza las estadísticas en el header de la app"""
     stats = app.store.get_statistics()
-    if hasattr(app, 'total_label'):
+    if _alive(app, 'total_label'):
         app.total_label.configure(text=str(stats["total"]))
-    if hasattr(app, 'completed_label'):
+    if _alive(app, 'completed_label'):
         app.completed_label.configure(text=str(stats["completed"]))
-    if hasattr(app, 'pending_label'):
+    if _alive(app, 'pending_label'):
         app.pending_label.configure(text=str(stats["pending"]))
-    if hasattr(app, 'footer_label'):
+    if _alive(app, 'footer_label'):
         app.footer_label.configure(
             text=f"✨ {stats['total']} tareas • {stats['completed']} completadas"
         )
@@ -62,6 +75,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.store = store
         self.store.set_after(self.after)
         self.title(APP_NAME)
+        self.BG = MODERN_COLORS["Background"]  # instancia: se actualiza al cambiar de tema
         self.configure(bg=self.BG)
 
         # Ocultar la ventana mientras se construye para evitar el "flash negro"
@@ -83,28 +97,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.minsize(1280, 750)  # Tamaño mínimo de la app
         self.resizable(True, True)
 
-        self._create_header()
-        self._create_toolbar()
-
-        # Frame principal con 2 columnas: tabs (tareas/calendario) + gamificación
-        main_container = tk.Frame(self, bg=self.BG)
-        main_container.pack(fill="both", expand=True, padx=8, pady=8)
-
-        # Columna izquierda: Notebook con tabs (65%)
-        self.left_column = tk.Frame(main_container, bg=self.BG)
-        self.left_column.pack(side="left", fill="both", expand=True, padx=(0, 8))
-
-        # Columna derecha: panel de gamificación (35% - más espacio)
-        self.gamification_column = tk.Frame(main_container, bg=self.BG, width=350)
-        self.gamification_column.pack(side="right", fill="y", padx=(8, 8))
-        self.gamification_column.pack_propagate(False)
-
-        # Crear sistema de tabs
-        self._create_tabs_notebook()
-        self._create_content_area()  # Crea canvas en tasks_column (dentro del tab de tareas)
-        self._create_calendar_panel()  # Crea panel de calendario en el segundo tab
-        self._create_gamification_panel()
-        self._create_footer()
+        self._build_main_ui()
 
         # Mini calendario flotante (inicialmente oculto)
         self.mini_calendar = None
@@ -127,6 +120,86 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
         self.after(200, self.reopen_notes)
         self.after(400, self.open_daily_mission_posits)  # Abrir posits de misiones diarias
+
+    def _build_main_ui(self):
+        """Construye los widgets principales. Reutilizable al cambiar de tema."""
+        self._create_header()
+        self._create_toolbar()
+
+        # Frame principal con 2 columnas: tabs (tareas/calendario) + gamificación
+        main_container = tk.Frame(self, bg=self.BG)
+        main_container.pack(fill="both", expand=True, padx=8, pady=8)
+
+        # Columna izquierda: Notebook con tabs
+        self.left_column = tk.Frame(main_container, bg=self.BG)
+        self.left_column.pack(side="left", fill="both", expand=True, padx=(0, 8))
+
+        # Columna derecha: panel de gamificación
+        self.gamification_column = tk.Frame(main_container, bg=self.BG, width=350)
+        self.gamification_column.pack(side="right", fill="y", padx=(8, 8))
+        self.gamification_column.pack_propagate(False)
+
+        self._create_tabs_notebook()
+        self._create_content_area()
+        self._create_calendar_panel()
+        self._create_gamification_panel()
+        self._create_footer()
+
+    def open_settings(self):
+        """Abre el diálogo de Ajustes."""
+        from .dialogs import SettingsDialog
+        SettingsDialog(self, self)
+
+    def apply_theme(self, name: str):
+        """Cambia el tema (claro/oscuro) y reconstruye la UI en vivo."""
+        from .config import set_theme
+        set_theme(name)
+        self.rebuild_ui()
+
+    def rebuild_ui(self):
+        """Reconstruye la ventana principal con el tema activo (sin reiniciar)."""
+        # Cerrar posits/notas/pomodoro/mini-cal: se reabren con el tema nuevo
+        for windows in (self.note_windows, self.quick_windows):
+            for w in list(windows.values()):
+                try:
+                    w.destroy()
+                except Exception:
+                    pass
+            windows.clear()
+
+        if getattr(self, "pomodoro_window", None) is not None:
+            try:
+                if self.pomodoro_window.winfo_exists():
+                    self.pomodoro_window.destroy()
+            except Exception:
+                pass
+            self.pomodoro_window = None
+
+        if getattr(self, "mini_calendar", None) is not None:
+            try:
+                self.mini_calendar.destroy()
+            except Exception:
+                pass
+            self.mini_calendar = None
+
+        # Destruir los widgets del cuerpo (no los Toplevel, p. ej. el propio
+        # diálogo de Ajustes que dispara el cambio) y reconstruir con el nuevo fondo
+        for w in self.winfo_children():
+            if isinstance(w, tk.Toplevel):
+                continue
+            try:
+                w.destroy()
+            except Exception:
+                pass
+
+        self.BG = MODERN_COLORS["Background"]
+        self.configure(bg=self.BG)
+        self._build_main_ui()
+        self.render_tasks()
+
+        # Reabrir posits (notas ancladas/abiertas y misiones diarias)
+        self.after(80, self.reopen_notes)
+        self.after(160, self.open_daily_mission_posits)
 
     def _create_tabs_notebook(self):
         """Crea el sistema de tabs personalizado (más visible que ttk.Notebook)"""
@@ -363,8 +436,8 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
         # --- Grupo: ventana ---
         # Solo los posits flotantes deben quedar siempre encima; la ventana
-        # principal arranca normal. El usuario puede activarlo con este toggle.
-        self.var_topmost = tk.BooleanVar(value=False)
+        # principal arranca normal. El valor por defecto se ajusta en Ajustes.
+        self.var_topmost = tk.BooleanVar(value=bool(load_settings().get("topmost_default", False)))
 
         def _toggle_topmost():
             self.attributes("-topmost", self.var_topmost.get())
@@ -379,6 +452,10 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         chk_top.pack(side="left", padx=8)
         Tooltip(chk_top, "Mantener la ventana principal por encima del resto")
         _toggle_topmost()
+
+        b_settings = PillButton(center, "Ajustes", self.open_settings, "Secondary", "normal", "⚙️")
+        b_settings.pack(side="left", padx=6)
+        Tooltip(b_settings, "Tema, Pomodoro, notificaciones e inicio automático")
 
     def _create_content_area(self):
         """Crea el área de contenido con scroll para las tareas"""
