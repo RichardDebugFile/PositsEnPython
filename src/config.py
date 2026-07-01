@@ -6,6 +6,7 @@ Centraliza constantes, colores, rutas y variables de entorno
 """
 
 import os
+import json
 from pathlib import Path
 
 # ---------------------------- Información de la app ----------------------------
@@ -30,8 +31,12 @@ LOCAL_DATA_FILE = PROJECT_ROOT / "tasks.json"
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
 
-# ---------------------------- Colores Modernos ----------------------------
-MODERN_COLORS = {
+# ---------------------------- Temas (claro / oscuro) ----------------------------
+# Los widgets leen MODERN_COLORS/GRADIENTS al construirse. Para cambiar de tema
+# en vivo NO se rebindean estos nombres (otros módulos ya importaron el objeto):
+# se MUTAN en el sitio con apply_theme_dicts() y se reconstruye la UI.
+
+_LIGHT_MODERN = {
     "Primary": "#2196F3",
     "Secondary": "#FF9800",
     "Success": "#4CAF50",
@@ -46,7 +51,7 @@ MODERN_COLORS = {
     "TextLight": "#95A5A6",
 }
 
-GRADIENTS = {
+_LIGHT_GRADIENTS = {
     "Primary": ["#2196F3", "#1976D2"],
     "Secondary": ["#FF9800", "#F57C00"],
     "Success": ["#4CAF50", "#388E3C"],
@@ -54,6 +59,94 @@ GRADIENTS = {
     "Danger": ["#F44336", "#D32F2F"],
     "Card": ["#FFFFFF", "#F5F5F5"],
 }
+
+_DARK_MODERN = {
+    "Primary": "#42A5F5",
+    "Secondary": "#FFB74D",
+    "Success": "#66BB6A",
+    "Warning": "#FFCA28",
+    "Danger": "#EF5350",
+    "Light": "#2B2F36",       # superficie secundaria (listboxes, drop zones)
+    "Dark": "#0D0D0D",        # casi negro (texto sobre posit de color, tooltips)
+    "White": "#20242B",       # superficie de inputs / elevada
+    "Background": "#15171C",  # fondo de la app
+    "Card": "#1E222A",        # tarjetas / paneles
+    "Text": "#E8EAED",        # texto principal claro
+    "TextLight": "#9AA0A6",   # texto secundario
+}
+
+_DARK_GRADIENTS = {
+    "Primary": ["#1E88E5", "#1565C0"],
+    "Secondary": ["#FB8C00", "#EF6C00"],
+    "Success": ["#43A047", "#2E7D32"],
+    "Warning": ["#F9A825", "#F57F17"],
+    "Danger": ["#E53935", "#C62828"],
+    "Card": ["#1E222A", "#15171C"],
+}
+
+_THEMES = {
+    "light": (_LIGHT_MODERN, _LIGHT_GRADIENTS),
+    "dark": (_DARK_MODERN, _DARK_GRADIENTS),
+}
+
+# Dicts activos que consume TODA la app (se rellenan más abajo con el tema guardado).
+MODERN_COLORS = {}
+GRADIENTS = {}
+
+SETTINGS_FILE = DATA_DIR / "app_settings.json"
+
+
+def load_settings() -> dict:
+    """Lee las preferencias de la app (tema, notificaciones, etc.)."""
+    try:
+        if SETTINGS_FILE.exists():
+            with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+
+def save_settings(data: dict):
+    """Guarda las preferencias de la app."""
+    try:
+        with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def apply_theme_dicts(name: str):
+    """Muta MODERN_COLORS/GRADIENTS en el sitio con la paleta del tema dado."""
+    modern, grad = _THEMES.get(name, _THEMES["light"])
+    MODERN_COLORS.clear()
+    MODERN_COLORS.update(modern)
+    GRADIENTS.clear()
+    GRADIENTS.update(grad)
+
+
+def get_theme() -> str:
+    """Nombre del tema activo ('light' | 'dark')."""
+    return CURRENT_THEME
+
+
+def set_theme(name: str) -> str:
+    """Activa un tema y lo persiste. Devuelve el nombre aplicado."""
+    global CURRENT_THEME
+    CURRENT_THEME = name if name in _THEMES else "light"
+    apply_theme_dicts(CURRENT_THEME)
+    settings = load_settings()
+    settings["theme"] = CURRENT_THEME
+    save_settings(settings)
+    return CURRENT_THEME
+
+
+# Cargar el tema guardado al importar (por defecto claro) y poblar los dicts.
+_SETTINGS = load_settings()
+CURRENT_THEME = _SETTINGS.get("theme", "light")
+if CURRENT_THEME not in _THEMES:
+    CURRENT_THEME = "light"
+apply_theme_dicts(CURRENT_THEME)
 
 VIBRANT_COLORS = {
     "Sunshine": "#FFD54F",   # Amarillo
@@ -150,6 +243,10 @@ NOTIFICATION_CONFIG = {
     "enable_sound": True,
     "enable_system_notifications": True,
 }
+
+# Aplicar preferencias guardadas que afectan a config de módulos
+if "notifications_enabled" in _SETTINGS:
+    NOTIFICATION_CONFIG["enable_system_notifications"] = bool(_SETTINGS["notifications_enabled"])
 
 # ---------------------------- Adjuntos ----------------------------
 ALLOWED_ATTACHMENT_EXTENSIONS = {
