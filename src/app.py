@@ -36,7 +36,7 @@ from .ui import (
     CalendarPanel,
     MiniCalendarWidget,
 )
-from .ui.components import Tooltip
+from .ui.components import Tooltip, FlowFrame
 from .ui.theme import apply_ttk_theme
 from .dialogs import ModernAddTaskDialog, OllamaCaptureDialog
 from .services import NotificationService
@@ -374,40 +374,52 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
     def _create_toolbar(self):
         toolbar = tk.Frame(self, bg=GRADIENTS["Card"][0], relief="flat", bd=0)
         toolbar.pack(fill="x", padx=8, pady=8)
-        center = create_centered_row(toolbar)
+
+        # Barra con wrap: los controles se reacomodan en varias filas al reducir
+        # el ancho de la ventana, evitando que se corten botones/textos.
+        center = FlowFrame(toolbar, bg=toolbar.cget("bg"), hgap=6, vgap=6)
+        center.pack(fill="x")
+        self.toolbar_bar = center
+        bar_bg = center.cget("bg")
+        chk_kw = dict(
+            bg=bar_bg,
+            fg=MODERN_COLORS["Text"],
+            selectcolor=MODERN_COLORS["White"],
+            activebackground=bar_bg,
+            activeforeground=MODERN_COLORS["Text"],
+            font=("Segoe UI", 9, "bold"),
+        )
 
         def _sep():
             """Separador vertical entre grupos de la barra."""
-            tk.Frame(center, bg=MODERN_COLORS["TextLight"], width=1, height=24).pack(
-                side="left", padx=8, pady=4
-            )
+            center.add(tk.Frame(center, bg=MODERN_COLORS["TextLight"], width=1, height=24))
 
         # --- Grupo: crear / ver ---
         b_new = PillButton(center, "Nueva Tarea", self.open_add_dialog, "Primary", "normal", "➕")
-        b_new.pack(side="left", padx=6)
+        center.add(b_new)
         Tooltip(b_new, "Crear una nueva tarea")
 
         b_notes = PillButton(center, "Abrir Notas", self.reopen_notes, "Secondary", "normal", "📝")
-        b_notes.pack(side="left", padx=6)
+        center.add(b_notes)
         Tooltip(b_notes, "Reabrir las notas/posit guardados")
 
         _sep()
 
         # --- Grupo: herramientas ---
         b_ia = PillButton(center, "IA (Ollama)", self.open_ollama_dialog, "Success", "normal", "🤖")
-        b_ia.pack(side="left", padx=6)
+        center.add(b_ia)
         Tooltip(b_ia, "Crear tareas con IA local (Ollama)")
 
         b_music = PillButton(center, "Descargar Música", self.open_music_downloader, "Info", "normal", "🎵")
-        b_music.pack(side="left", padx=6)
+        center.add(b_music)
         Tooltip(b_music, "Descargar música desde YouTube")
 
         b_pomo = PillButton(center, "Pomodoro", self.open_pomodoro, "Warning", "normal", "🍅")
-        b_pomo.pack(side="left", padx=6)
+        center.add(b_pomo)
         Tooltip(b_pomo, "Abrir el temporizador Pomodoro")
 
         b_cal = PillButton(center, "Mini Cal", self.toggle_mini_calendar, "Primary", "normal", "📅")
-        b_cal.pack(side="left", padx=6)
+        center.add(b_cal)
         Tooltip(b_cal, "Mostrar/ocultar el mini calendario")
 
         _sep()
@@ -419,29 +431,27 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             text="👁️ Solo Pendientes",
             variable=self.var_only_pending,
             command=self.render_tasks,
-            bg=center.cget("bg"),
-            font=("Segoe UI", 9, "bold")
+            **chk_kw
         )
-        chk_pending.pack(side="left", padx=8)
+        center.add(chk_pending)
         Tooltip(chk_pending, "Mostrar solo tareas sin completar")
 
         # Ordenamiento
-        sort_frame = tk.Frame(center, bg=center.cget("bg"))
-        sort_frame.pack(side="left", padx=8)
-        tk.Label(sort_frame, text="Ordenar:", bg=center.cget("bg"),
-                 font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0,4))
+        sort_frame = tk.Frame(center, bg=bar_bg)
+        tk.Label(sort_frame, text="Ordenar:", bg=bar_bg, fg=MODERN_COLORS["Text"],
+                 font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 4))
         self.var_sort = tk.StringVar(value="Fecha")
         sort_options = ["Fecha", "Prioridad", "Título", "Color"]
         self.cb_sort = ttk.Combobox(sort_frame, textvariable=self.var_sort,
                                     state="readonly", width=10, values=sort_options)
         self.cb_sort.pack(side="left")
         self.cb_sort.bind("<<ComboboxSelected>>", lambda e: self._on_sort_change())
+        center.add(sort_frame)
 
         # Filtro de color
-        self.color_filter_frame = tk.Frame(center, bg=center.cget("bg"))
-        self.color_filter_frame.pack(side="left", padx=8)
-        tk.Label(self.color_filter_frame, text="Color:", bg=center.cget("bg"),
-                 font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0,4))
+        self.color_filter_frame = tk.Frame(center, bg=bar_bg)
+        tk.Label(self.color_filter_frame, text="Color:", bg=bar_bg, fg=MODERN_COLORS["Text"],
+                 font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 4))
         self.var_color_filter = tk.StringVar(value="Todos")
         self.cb_color_filter = ttk.Combobox(self.color_filter_frame, textvariable=self.var_color_filter,
                                             state="readonly", width=12, values=["Todos"])
@@ -449,6 +459,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.cb_color_filter.bind(
             "<<ComboboxSelected>>", lambda e: self.render_tasks()
         )
+        center.add(self.color_filter_frame)
 
         _sep()
 
@@ -464,15 +475,14 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
             text="Siempre arriba",
             variable=self.var_topmost,
             command=_toggle_topmost,
-            bg=center.cget("bg"),
-            font=("Segoe UI", 9, "bold")
+            **chk_kw
         )
-        chk_top.pack(side="left", padx=8)
+        center.add(chk_top)
         Tooltip(chk_top, "Mantener la ventana principal por encima del resto")
         _toggle_topmost()
 
         b_settings = PillButton(center, "Ajustes", self.open_settings, "Secondary", "normal", "⚙️")
-        b_settings.pack(side="left", padx=6)
+        center.add(b_settings)
         Tooltip(b_settings, "Tema, Pomodoro, notificaciones e inicio automático")
 
     def _create_content_area(self):
@@ -640,16 +650,12 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
     # ---------- Filtro de color dinámico ----------
     def _refresh_color_filter(self):
+        # El filtro de color lo posiciona la barra con wrap (FlowFrame), así que
+        # aquí solo actualizamos los valores disponibles (no se hace pack/forget).
         colors_present = sorted({t.color for t in self.store.tasks})
-        if len(self.store.tasks) == 0:
-            self.color_filter_frame.pack_forget()
-            self.var_color_filter.set("Todos")
-            return
         labels = ["Todos"] + [COLOR_LABELS.get(k, k) for k in colors_present]
         current = self.var_color_filter.get()
         self.cb_color_filter["values"] = labels
-        if not self.color_filter_frame.winfo_ismapped():
-            self.color_filter_frame.pack(side="left", padx=8)
         if current not in labels:
             self.var_color_filter.set("Todos")
 
