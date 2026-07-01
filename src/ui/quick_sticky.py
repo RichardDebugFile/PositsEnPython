@@ -19,6 +19,10 @@ class QuickStickyWindow(tk.Toplevel):
 
     def __init__(self, master, task: dict, skip_centering=False):
         super().__init__(master)
+        # Construir oculto y mostrar ya pintado/posicionado evita el "cuadro
+        # negro" (la ventana se mapea antes de pintar su fondo). Se hace
+        # deiconify tras fijar la geometría (_center_over_master/_apply_saved_size).
+        self.withdraw()
         self.task = task
         self.skip_centering = skip_centering  # Para misiones diarias que ya tienen posición
         self.overrideredirect(True)  # Sin barra de título
@@ -118,12 +122,14 @@ class QuickStickyWindow(tk.Toplevel):
         y = my + (mh - h) // 2
 
         self.geometry(f"{w}x{h}+{x}+{y}")
+        self.deiconify()  # mostrar ya posicionado y pintado
 
     def _apply_saved_size(self):
         """Restaura solo el tamaño guardado (la posición la fija la app)."""
         saved = self._load_saved_geometry()
         if saved and saved.get("w") and saved.get("h"):
             self.geometry(f"{saved['w']}x{saved['h']}")
+        self.deiconify()  # mostrar ya posicionado y pintado
 
     def _start_move(self, e):
         """Inicia el movimiento de la ventana"""
