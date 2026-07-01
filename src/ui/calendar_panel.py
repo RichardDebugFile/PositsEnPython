@@ -596,7 +596,7 @@ class CalendarPanel(tk.Frame):
         # Frame de la tarea
         task_frame = tk.Frame(
             self.detail_tasks_frame,
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             relief="solid",
             bd=1
         )
@@ -607,11 +607,11 @@ class CalendarPanel(tk.Frame):
         stripe.pack(side="left", fill="y")
 
         # Contenido principal
-        content = tk.Frame(task_frame, bg="white")
+        content = tk.Frame(task_frame, bg=MODERN_COLORS["Card"])
         content.pack(side="left", fill="both", expand=True, padx=8, pady=6)
 
         # Fila superior: checkbox + título
-        top_row = tk.Frame(content, bg="white")
+        top_row = tk.Frame(content, bg=MODERN_COLORS["Card"])
         top_row.pack(fill="x")
 
         # Checkbox
@@ -620,8 +620,8 @@ class CalendarPanel(tk.Frame):
             top_row,
             variable=var_done,
             command=lambda t=task: self._toggle_task_done(t.id),
-            bg="white",
-            activebackground="white"
+            bg=MODERN_COLORS["Card"],
+            activebackground=MODERN_COLORS["Card"]
         )
         chk.pack(side="left")
 
@@ -629,7 +629,7 @@ class CalendarPanel(tk.Frame):
         tk.Label(
             top_row,
             text=priority_info["emoji"],
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             font=("Segoe UI", 10)
         ).pack(side="left", padx=(0, 4))
 
@@ -639,7 +639,7 @@ class CalendarPanel(tk.Frame):
         title_label = tk.Label(
             top_row,
             text=task.title[:50] + ("..." if len(task.title) > 50 else ""),
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             fg=title_fg,
             font=("Segoe UI", 10, title_style),
             anchor="w",
@@ -663,7 +663,7 @@ class CalendarPanel(tk.Frame):
             tk.Label(
                 content,
                 text=task.desc[:100],
-                bg="white",
+                bg=MODERN_COLORS["Card"],
                 fg=MODERN_COLORS["TextLight"],
                 font=("Segoe UI", 9),
                 anchor="w",
@@ -672,14 +672,14 @@ class CalendarPanel(tk.Frame):
             ).pack(fill="x", pady=(2, 0))
 
         # Botones de acción
-        actions_frame = tk.Frame(task_frame, bg="white")
+        actions_frame = tk.Frame(task_frame, bg=MODERN_COLORS["Card"])
         actions_frame.pack(side="right", padx=8, pady=6)
 
         # Botón editar
         edit_btn = tk.Label(
             actions_frame,
             text="✏️",
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             cursor="hand2",
             font=("Segoe UI", 10)
         )
@@ -690,7 +690,7 @@ class CalendarPanel(tk.Frame):
         pomo_btn = tk.Label(
             actions_frame,
             text="🍅",
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             cursor="hand2",
             font=("Segoe UI", 10)
         )
@@ -701,7 +701,7 @@ class CalendarPanel(tk.Frame):
         posit_btn = tk.Label(
             actions_frame,
             text="📌",
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             cursor="hand2",
             font=("Segoe UI", 10)
         )

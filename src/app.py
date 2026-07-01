@@ -233,14 +233,14 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.tab_buttons = []
 
         # Tab 1: Tareas
-        btn_tasks = tk.Frame(self.tabs_header, bg="#CCCCCC", relief="raised", bd=2, cursor="hand2")
+        btn_tasks = tk.Frame(self.tabs_header, bg=MODERN_COLORS["Light"], relief="raised", bd=2, cursor="hand2")
         btn_tasks.pack(side="left", fill="both", expand=True, padx=(0, 2))
 
         lbl_tasks = tk.Label(
             btn_tasks,
             text="📋 Tareas",
-            bg="#CCCCCC",
-            fg="#000000",
+            bg=MODERN_COLORS["Light"],
+            fg=MODERN_COLORS["Text"],
             font=("Segoe UI", 12, "bold"),
             cursor="hand2"
         )
@@ -251,14 +251,14 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self.tab_buttons.append((btn_tasks, lbl_tasks))
 
         # Tab 2: Calendario
-        btn_calendar = tk.Frame(self.tabs_header, bg="#CCCCCC", relief="raised", bd=2, cursor="hand2")
+        btn_calendar = tk.Frame(self.tabs_header, bg=MODERN_COLORS["Light"], relief="raised", bd=2, cursor="hand2")
         btn_calendar.pack(side="left", fill="both", expand=True, padx=(2, 0))
 
         lbl_calendar = tk.Label(
             btn_calendar,
             text="📅 Calendario",
-            bg="#CCCCCC",
-            fg="#000000",
+            bg=MODERN_COLORS["Light"],
+            fg=MODERN_COLORS["Text"],
             font=("Segoe UI", 12, "bold"),
             cursor="hand2"
         )
@@ -295,13 +295,13 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         # Actualizar estilos de botones
         for i, (btn_frame, btn_label) in enumerate(self.tab_buttons):
             if i == tab_index:
-                # Tab seleccionado: Azul brillante
-                btn_frame.config(bg="#2196F3", relief="solid", bd=3)
-                btn_label.config(bg="#2196F3", fg="#FFFFFF")
+                # Tab seleccionado: color primario
+                btn_frame.config(bg=GRADIENTS["Primary"][0], relief="solid", bd=3)
+                btn_label.config(bg=GRADIENTS["Primary"][0], fg="white")
             else:
-                # Tab no seleccionado: Gris
-                btn_frame.config(bg="#CCCCCC", relief="raised", bd=2)
-                btn_label.config(bg="#CCCCCC", fg="#000000")
+                # Tab no seleccionado
+                btn_frame.config(bg=MODERN_COLORS["Light"], relief="raised", bd=2)
+                btn_label.config(bg=MODERN_COLORS["Light"], fg=MODERN_COLORS["Text"])
 
         # Mostrar nuevo tab
         if tab_index == 0:

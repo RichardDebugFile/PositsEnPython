@@ -283,14 +283,14 @@ class PomodoroWindow(tk.Toplevel):
         """Crea un widget para una tarea en la cola"""
         task_frame = tk.Frame(
             self.tasks_inner_frame,
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             relief="solid",
             bd=1
         )
         task_frame.pack(fill="x", padx=10, pady=5)
 
         # Contenido de la tarea
-        content_frame = tk.Frame(task_frame, bg="white")
+        content_frame = tk.Frame(task_frame, bg=MODERN_COLORS["Card"])
         content_frame.pack(fill="x", padx=10, pady=8)
 
         # Prioridad y título
@@ -300,7 +300,7 @@ class PomodoroWindow(tk.Toplevel):
         title_label = tk.Label(
             content_frame,
             text=f"{priority_info['emoji']} {task.title}",
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             fg=MODERN_COLORS["Text"],
             font=("Segoe UI", 10, "bold"),
             anchor="w"
@@ -311,14 +311,14 @@ class PomodoroWindow(tk.Toplevel):
         xp_label = tk.Label(
             content_frame,
             text=f"+{priority_info['xp']} XP",
-            bg="white",
+            bg=MODERN_COLORS["Card"],
             fg=priority_info['color'],
             font=("Segoe UI", 9, "bold")
         )
         xp_label.pack(side="right")
 
         # Botones
-        btn_frame = tk.Frame(task_frame, bg="white")
+        btn_frame = tk.Frame(task_frame, bg=MODERN_COLORS["Card"])
         btn_frame.pack(fill="x", padx=10, pady=(0, 8))
 
         # Botón completar
