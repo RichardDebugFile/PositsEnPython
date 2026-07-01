@@ -37,6 +37,7 @@ from .ui import (
     MiniCalendarWidget,
 )
 from .ui.components import Tooltip
+from .ui.theme import apply_ttk_theme
 from .dialogs import ModernAddTaskDialog, OllamaCaptureDialog
 from .services import NotificationService
 from .services.music_player import MusicPlayer
@@ -123,6 +124,7 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
 
     def _build_main_ui(self):
         """Construye los widgets principales. Reutilizable al cambiar de tema."""
+        apply_ttk_theme(self)  # estilos ttk (combos/scrollbars) según el tema
         self._create_header()
         self._create_toolbar()
 

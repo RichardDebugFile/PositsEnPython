@@ -24,8 +24,20 @@ class SettingsDialog(tk.Toplevel):
         self.configure(bg=GRADIENTS["Card"][0])
         self.resizable(False, False)
         self.transient(master)
+        self._container = None
+        self._build()
 
-        wrap = tk.Frame(self, bg=GRADIENTS["Card"][0])
+    def _build(self):
+        """(Re)construye el contenido con el tema activo (permite re-tintar en vivo)."""
+        self.configure(bg=GRADIENTS["Card"][0])
+        if self._container is not None:
+            try:
+                self._container.destroy()
+            except Exception:
+                pass
+        self._container = tk.Frame(self, bg=GRADIENTS["Card"][0])
+        self._container.pack(fill="both", expand=True)
+        wrap = tk.Frame(self._container, bg=GRADIENTS["Card"][0])
         wrap.pack(fill="both", expand=True, padx=16, pady=16)
 
         # ---------- Tema ----------
@@ -111,8 +123,11 @@ class SettingsDialog(tk.Toplevel):
 
     # ---------------------------- Acciones ----------------------------
     def _on_theme(self):
-        # Reconstruye la ventana principal en vivo (este diálogo sobrevive).
+        # Reconstruye la ventana principal en vivo y re-tinta este diálogo.
+        # El rebuild se difiere para no destruir el widget que dispara el callback.
         self.app.apply_theme(self.var_theme.get())
+        self.after(10, self._build)
+        self.after(20, self.lift)
 
     def _save_pomodoro(self):
         pm = self.app.pomodoro_manager
