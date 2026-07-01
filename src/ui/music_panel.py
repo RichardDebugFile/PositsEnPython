@@ -12,6 +12,10 @@ from .components import PillButton
 from ..utils.audio_detection import get_browser_playing_audio
 from ..utils.cdp_helper import CDPHelper
 from ..utils.media_capture import get_windows_media_info, clean_music_title
+from ..services.spotify import (
+    open_uri, play_pause, next_track, previous_track,
+    load_playlists, save_playlists, normalize_spotify_uri,
+)
 
 
 class MusicPanel(tk.Frame):
@@ -292,6 +296,102 @@ class MusicPanel(tk.Frame):
             width=4
         )
         self.volume_label.pack(side="left")
+
+        # --- Spotify ---
+        self._create_spotify_section()
+
+    def _create_spotify_section(self):
+        """Sección para abrir Spotify y controlar la reproducción."""
+        card = GRADIENTS["Card"][0]
+        sec = tk.Frame(self, bg=card)
+        sec.pack(fill="x", padx=12, pady=(0, 12))
+
+        tk.Label(
+            sec, text="🎧 Spotify", bg=card, fg=MODERN_COLORS["Text"],
+            font=("Segoe UI", 10, "bold")
+        ).pack(anchor="w", pady=(4, 4))
+
+        self._spotify_playlists = load_playlists()
+
+        row = tk.Frame(sec, bg=card)
+        row.pack(fill="x")
+        self.var_spotify = tk.StringVar(
+            value=self._spotify_playlists[0]["name"] if self._spotify_playlists else ""
+        )
+        self.cb_spotify = ttk.Combobox(
+            row, textvariable=self.var_spotify, state="readonly",
+            values=[p["name"] for p in self._spotify_playlists], width=16
+        )
+        self.cb_spotify.pack(side="left", fill="x", expand=True)
+        PillButton(row, "▶ Abrir", self._spotify_open_selected, "Success", "small").pack(
+            side="left", padx=(6, 0)
+        )
+
+        ctrl = tk.Frame(sec, bg=card)
+        ctrl.pack(fill="x", pady=(4, 0))
+        PillButton(ctrl, "⏮", self._spotify_prev, "Secondary", "small").pack(side="left", padx=2)
+        PillButton(ctrl, "⏯", self._spotify_playpause, "Primary", "small").pack(side="left", padx=2)
+        PillButton(ctrl, "⏭", self._spotify_next, "Secondary", "small").pack(side="left", padx=2)
+        PillButton(ctrl, "➕ Playlist", self._spotify_add_playlist, "Info", "small").pack(
+            side="left", padx=(8, 0)
+        )
+
+    def _spotify_selected_uri(self):
+        name = self.var_spotify.get()
+        for p in self._spotify_playlists:
+            if p["name"] == name:
+                return p["uri"]
+        return None
+
+    def _spotify_open_selected(self):
+        uri = self._spotify_selected_uri()
+        if not uri:
+            messagebox.showinfo("Spotify", "Elige o añade una playlist primero.")
+            return
+        # Evitar audio duplicado: parar la música local del reproductor propio
+        try:
+            if self.music_player:
+                self.music_player.stop()
+                self._update_display()
+        except Exception:
+            pass
+        if not open_uri(uri):
+            messagebox.showwarning(
+                "Spotify",
+                "No se pudo abrir Spotify.\nVerifica que esté instalado."
+            )
+
+    def _spotify_playpause(self):
+        play_pause()
+
+    def _spotify_next(self):
+        next_track()
+
+    def _spotify_prev(self):
+        previous_track()
+
+    def _spotify_add_playlist(self):
+        from tkinter import simpledialog
+        url = simpledialog.askstring(
+            "Añadir playlist de Spotify",
+            "Pega el enlace o URI de la playlist:\n"
+            "(ej: https://open.spotify.com/playlist/XXXX o spotify:playlist:XXXX)",
+            parent=self
+        )
+        if not url:
+            return
+        uri = normalize_spotify_uri(url)
+        if not uri:
+            messagebox.showwarning("Spotify", "No reconocí ese enlace/URI de Spotify.")
+            return
+        name = simpledialog.askstring("Nombre", "Nombre para la playlist:", parent=self)
+        if not name:
+            name = uri.split(":")[-1][:12]
+        self._spotify_playlists.append({"name": name, "uri": uri})
+        save_playlists(self._spotify_playlists)
+        self.cb_spotify["values"] = [p["name"] for p in self._spotify_playlists]
+        self.var_spotify.set(name)
+        messagebox.showinfo("Spotify", f"Playlist '{name}' añadida.")
 
     def _browse_file(self):
         """Abre diálogo para seleccionar archivo de música"""
