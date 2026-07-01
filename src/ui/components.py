@@ -63,6 +63,69 @@ class Tooltip:
             self._tip = None
 
 
+# ---------------------------- Contenedor con wrap (flow) ----------------------------
+class FlowFrame(tk.Frame):
+    """
+    Contenedor que reacomoda (wrap) sus hijos en varias filas segun el ancho
+    disponible, evitando que los botones/controles se corten al reducir la ventana.
+
+    Uso: crear con este como parent, y en vez de .pack(), registrar con .add():
+        bar = FlowFrame(parent)
+        bar.pack(fill="x")
+        b = PillButton(bar, ...); bar.add(b)
+    """
+
+    def __init__(self, master, hgap=6, vgap=6, **kwargs):
+        super().__init__(master, **kwargs)
+        self._items = []
+        self._hgap = hgap
+        self._vgap = vgap
+        self._pending = False
+        self.bind("<Configure>", self._schedule)
+
+    def add(self, widget):
+        """Registra un hijo para que participe en el flujo. Devuelve el widget."""
+        self._items.append(widget)
+        return widget
+
+    def _schedule(self, _event=None):
+        if self._pending:
+            return
+        self._pending = True
+        self.after_idle(self._reflow)
+
+    def _reflow(self):
+        self._pending = False
+        if not self.winfo_exists():
+            return
+        width = self.winfo_width()
+        if width <= 1:
+            return  # aun sin geometria real; el proximo <Configure> lo reintenta
+
+        x = self._hgap
+        y = self._vgap
+        row_h = 0
+        for w in self._items:
+            if not w.winfo_exists():
+                continue
+            ww = w.winfo_reqwidth()
+            wh = w.winfo_reqheight()
+            # Saltar de fila si no cabe (y no es el primero de la fila)
+            if x > self._hgap and x + ww > width - self._hgap:
+                x = self._hgap
+                y += row_h + self._vgap
+                row_h = 0
+            w.place(x=x, y=y)
+            x += ww + self._hgap
+            row_h = max(row_h, wh)
+
+        new_h = y + row_h + self._vgap
+        # Ajustar altura del contenedor a las filas usadas (solo si cambia,
+        # para no re-disparar <Configure> en bucle)
+        if self.winfo_reqheight() != new_h:
+            self.configure(height=new_h)
+
+
 # ---------------------------- Botón Pill (Canvas) ----------------------------
 class PillButton(tk.Canvas):
     """
