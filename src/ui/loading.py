@@ -60,9 +60,10 @@ class LoadingOverlay:
         main_frame = tk.Frame(self.overlay, bg=bg_color)
         main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-        # Spinner (usando ttk.Progressbar en modo indeterminate)
+        # Spinner (usando ttk.Progressbar en modo indeterminate).
+        # No forzar theme_use aquí: el tema ttk lo fija ui/theme.apply_ttk_theme
+        # (usando 'clam'), y cambiarlo revertiría el estilo de los combos.
         style = ttk.Style()
-        style.theme_use('default')
         style.configure(
             "Loading.Horizontal.TProgressbar",
             troughcolor=MODERN_COLORS["Light"],
