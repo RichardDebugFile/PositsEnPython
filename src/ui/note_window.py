@@ -20,6 +20,11 @@ class ModernNoteWindow(tk.Toplevel):
 
     def __init__(self, app, tid: str, task):
         super().__init__(app)
+        # Construir oculto y mostrar ya pintado evita el "cuadro negro" al abrir
+        # (la ventana se mapea antes de pintar su fondo). after(1) se dispara tras
+        # completar __init__, sin verse afectado por update_idletasks.
+        self.withdraw()
+        self.after(1, self.deiconify)
         self.app = app
         self.tid = tid
         self.palette_win = None
