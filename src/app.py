@@ -199,9 +199,25 @@ class ModernStickyApp(TkinterDnD.Tk if DND_AVAILABLE else tk.Tk):
         self._build_main_ui()
         self.render_tasks()
 
+        # Conservar el centrado de la lista tras el rebuild: forzar el ancho del
+        # área de tareas al del canvas. Al recrear el canvas, su evento
+        # <Configure> (que normalmente fija este ancho) puede no re-dispararse a
+        # tiempo, dejando el área a su ancho natural y las tareas a la izquierda.
+        self.update_idletasks()
+        self._sync_task_area_width()
+        self.after_idle(self._sync_task_area_width)
+
         # Reabrir posits (notas ancladas/abiertas y misiones diarias)
         self.after(80, self.reopen_notes)
         self.after(160, self.open_daily_mission_posits)
+
+    def _sync_task_area_width(self):
+        """Ajusta el ancho del contenedor de tareas al del canvas (centrado)."""
+        try:
+            if self.canvas.winfo_exists() and self.task_window:
+                self.canvas.itemconfig(self.task_window, width=self.canvas.winfo_width())
+        except Exception:
+            pass
 
     def _create_tabs_notebook(self):
         """Crea el sistema de tabs personalizado (más visible que ttk.Notebook)"""
