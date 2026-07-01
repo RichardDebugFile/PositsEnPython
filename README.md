@@ -94,6 +94,17 @@ pip install pywin32 winshell
 pip install yt-dlp
 ```
 
+## ▶️ Inicio manual rápido
+
+Doble clic en **`start.bat`** (en la raíz) para abrir la app sin consola (usa el
+entorno virtual). Para tenerlo a mano, crea un acceso directo en el escritorio:
+
+```bash
+python scripts\crear_acceso_directo.py
+```
+
+O manualmente: clic derecho en `start.bat` → *Enviar a* → *Escritorio (crear acceso directo)*.
+
 ## 🚀 Configurar Inicio Automático
 
 Para que **Posits Virtuales** se inicie automáticamente con Windows:
